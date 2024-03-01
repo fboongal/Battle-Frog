@@ -19,6 +19,16 @@ class Play extends Phaser.Scene {
          this.ratPos = new Phaser.Math.Vector2()
          this.ratRandom = 0
          this.tempRat = 0
+
+         // dragon fly 
+         this.dFlySpeed = -200
+         this.frogdFlySpeed = 300
+         this.dFlyStartSpawnDelay = 3000
+         this.dFlySpawnDelay = 6000
+         this.dFlyPos = new Phaser.Math.Vector2()
+         this.dFlyRandom = 0
+         this.tempDFly = 0
+         this.dFlyEaten = false
     }
 
     create(){
@@ -41,6 +51,14 @@ class Play extends Phaser.Scene {
         })
         this.time.delayedCall(this.ratSpawnDelay, () => { 
             this.addRat()
+        })
+
+        // set up dragonfly group
+        this.dFlyGroup = this.add.group({
+            runChildUpdate: true // make sure update runs on group children
+        })
+        this.time.delayedCall(this.dFlyStartSpawnDelay, () => { 
+            this.addDFly()
         })
 
         // Create the attack sprite, but set it initially inactive
@@ -98,6 +116,7 @@ class Play extends Phaser.Scene {
 
           // collisions
         this.physics.world.collide(this.frog, this.ratGroup, this.ratCollision, null, this) // rat vs frog
+        this.physics.world.collide(this.frog, this.dFlyGroup, this.dFlyCollision, null, this) // dragon fly vs frog
     }
 
     addRat() {
@@ -124,6 +143,32 @@ class Play extends Phaser.Scene {
 
     ratCollision(frog, rat) {
         console.log('Rats!')
+    }
+
+    addDFly() {
+
+        this.dFlyRandom = Phaser.Math.Between(0, 3)
+
+        if(this.dFlyRandom == 0){
+            this.dFlyPos.y = 75
+        }
+        else if(this.dFlyRandom == 1) {
+            this.dFlyPos.y = 225
+        }
+        else if(this.dFlyRandom == 2) {
+            this.dFlyPos.y = 375
+        }
+        else if(this.dFlyRandom == 3) {
+            this.dFlyPos.y = 525
+        }
+
+        this.dFly = new DFly(this, this.dFlySpeed, this.dFlyPos.y).setScale(0.5)
+
+        this.dFlyGroup.add(this.dFly)
+    }
+
+    dFlyCollision(frog, DFly) {
+        console.log('dragon flew!')
     }
 
     attackRatCollision(attack, rat) {
