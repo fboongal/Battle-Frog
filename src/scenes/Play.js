@@ -42,6 +42,13 @@ class Play extends Phaser.Scene {
         this.time.delayedCall(this.ratSpawnDelay, () => { 
             this.addRat()
         })
+
+        // Create the attack sprite, but set it initially inactive
+         this.attack = this.physics.add.sprite(0, 0).setOrigin(0.5).setActive(false)
+         this.attack.setSize(200, 75)
+
+         // Handle overlap between attack and enemy
+         this.physics.add.overlap(this.attack, this.ratGroup, this.attackRatCollision, null, this)
     }
 
     update() {
@@ -63,6 +70,15 @@ class Play extends Phaser.Scene {
                 this.physics.moveToObject(this.frog, this.hopPoint, this.frogVelocity)
                 this.canHop = false
             }
+        }
+
+        // attack input
+        if(Phaser.Input.Keyboard.JustDown(cursors.right)) {
+            this.attack.setPosition(this.frog.x + 100, this.frog.y).setActive(true)
+            this.time.delayedCall(100, () => { 
+                this.attack.setPosition(-300, 0) // remove sprite from canvas until called again
+            })
+
         }
 
           // check to see if frog has reached hop point
@@ -108,6 +124,15 @@ class Play extends Phaser.Scene {
 
     ratCollision(frog, rat) {
         console.log('Rats!')
+    }
+
+    attackRatCollision(attack, rat) {
+
+        console.log('rat hit')
+
+        // Destroy the rat
+        rat.destroy()
+
     }
 }
 
