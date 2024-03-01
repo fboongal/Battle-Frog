@@ -79,6 +79,9 @@ class Play extends Phaser.Scene {
                   this.canHop = true
               }
           }
+
+          // collisions
+        this.physics.world.collide(this.frog, this.ratGroup, this.ratCollision, null, this) // rat vs frog
     }
 
     addRat() {
@@ -101,6 +104,10 @@ class Play extends Phaser.Scene {
         this.rat = new Rat(this, this.ratSpeed, this.ratPos.y).setScale(0.5)
 
         this.ratGroup.add(this.rat)
+    }
+
+    ratCollision(frog, rat) {
+        console.log('Rats!')
     }
 }
 
