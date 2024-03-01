@@ -1,7 +1,7 @@
-class DFly extends Phaser.Physics.Arcade.Sprite {
-    constructor(scene, velocity, spawnY) {
+class FrogProjectile extends Phaser.Physics.Arcade.Sprite {
+    constructor(scene, velocity, spawnX, spawnY) {
         // call Phaser Physics Sprite constructor
-        super(scene, game.config.width + 100, spawnY)
+        super(scene, spawnX, spawnY)
 
         this.parentScene = scene               
 
@@ -10,11 +10,10 @@ class DFly extends Phaser.Physics.Arcade.Sprite {
         this.parentScene.physics.add.existing(this) 
         this.setVelocityX(velocity)         
         this.setImmovable()                    
-        this.newDFly = true
     }
 
     update() {
-        if(this.x < 0) {
+        if(this.x > game.config.width) {
             this.destroy()
         }
     }
