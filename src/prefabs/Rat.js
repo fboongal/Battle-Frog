@@ -15,10 +15,10 @@ class Rat extends Phaser.Physics.Arcade.Sprite {
     }
 
     update() {
-        if(this.newRat && this.x < game.config.width) {
+        /*if(this.newRat && this.x < game.config.width) {
             this.parentScene.addRat(this.parent, this.velocity)
             this.newRat = false
-        }
+        }*/
 
         if(this.x < 0) {
             this.destroy()

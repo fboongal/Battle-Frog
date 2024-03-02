@@ -30,10 +30,12 @@ class Play extends Phaser.Scene {
         // eat buffer
         this.pressedEat = false
         this.inputBufferTimeEat = 0
+        this.eatAnim = true
+        this.spitAnim = false
 
          // rat
          this.ratSpeed = -150
-         this.ratSpawnDelay = 1000
+         this.ratSpawnDelay = 2000
          this.ratStartSpawnDelay = 1000
          this.ratPos = new Phaser.Math.Vector2()
          this.ratRandom = 0
@@ -66,7 +68,7 @@ class Play extends Phaser.Scene {
         this.castle.setImmovable()
 
         //creation of frog and its properties
-        this.frog = this.physics.add.sprite(250, 375).setOrigin(0.5).setScale(0.5)
+        this.frog = this.physics.add.sprite(250, 375, 'frogeat').setOrigin(0.5).setScale(0.5)
         this.frog.setCollideWorldBounds(true)
         this.frog.setBounce(this.frogBounce)
         this.frog.setImmovable()
@@ -104,7 +106,7 @@ class Play extends Phaser.Scene {
          this.physics.add.overlap(this.attack, this.ratGroup, this.attackRatCollision, null, this)
 
         // create the eat sprite, but set it initially inactive
-         this.eat = this.physics.add.sprite(-300, 0).setOrigin(0.5).setActive(false)
+         this.eat = this.physics.add.sprite(-300, 0, 'tongue').setOrigin(0.5).setActive(false)
          this.eat.setSize(300, 75)
 
         // Handle overlap between eat and dFly
@@ -112,7 +114,7 @@ class Play extends Phaser.Scene {
 
         // challenge timer that increases spawn rate of enemies and dFlys
         this.challengeTimer = this.time.addEvent({
-            delay: 15000,
+            delay: 10000,
             callback: this.addChallenge,
             callbackScope: this,
             loop: true
@@ -121,7 +123,7 @@ class Play extends Phaser.Scene {
         // spawn enemies every X seconds
         this.ratSpawnTimer = this.time.addEvent({
             delay: this.ratSpawnDelay,
-            callback: this.addrat,
+            callback: this.addRat,
             callbackScope: this,
             loop: true
         })
@@ -157,6 +159,30 @@ class Play extends Phaser.Scene {
 
         this.timerText = this.add.text(game.config.width/2, 0, this.timer, timeConfig).setOrigin(0.5, 0)
         this.castleText = this.add.text(100, 0, this.castleHP, timeConfig).setOrigin(0.5, 0)
+
+        this.anims.create({
+            key: 'eat',
+            frameRate: 16,
+            repeat: 0,
+            frames: this.anims.generateFrameNumbers('frogeat', {
+                start:0,
+                end: 2
+            })
+        })
+
+        // eat/spit animation prototype
+        this.frog.on('animationcomplete', function () {
+            if(this.eatAnim) {
+                this.eat.setPosition(this.frog.x + 150, this.frog.y +10).setActive(true)
+                this.time.delayedCall(200, () => { // wait 1 tenth of a second
+                    this.eat.setPosition(-300, 0) // remove sprite from canvas until called again
+    
+                })
+            }
+            else if(this.spitAnim){
+                this.addFrogProjectile()
+            }
+        }, this)
     }
 
     update() {
@@ -176,8 +202,6 @@ class Play extends Phaser.Scene {
                 this.pressedAtk = false
             })
         }
-
-
         
         // eat input
         if(Phaser.Input.Keyboard.JustDown(cursors.left) || Phaser.Input.Keyboard.JustDown(keyLEFT)) {
@@ -282,16 +306,18 @@ class Play extends Phaser.Scene {
     eatCode() {
         // eating code
         if(this.canHop && !this.dFlyEaten && this.pressedEat) {
-            this.eat.setPosition(this.frog.x + 150, this.frog.y).setActive(true)
-            this.time.delayedCall(100, () => { // wait 1 tenth of a second
-                this.eat.setPosition(-300, 0) // remove sprite from canvas until called again
+            this.spitAnim = false
+            this.eatAnim = true
+            this.frog.anims.play('eat')
 
-            })
             this.pressedEat = false
         }
 
         else if (this.canHop && this.dFlyEaten && this.pressedEat) {
-            this.addFrogProjectile()
+            this.eatAnim = false
+            this.spitAnim = true
+            this.frog.anims.play('eat')
+
             this.dFlyEaten = false
             this.pressedEat = false
         }
@@ -367,9 +393,6 @@ class Play extends Phaser.Scene {
     }
 
     attackRatCollision(attack, rat) {
-
-        // console.log('rat down!')
-
         // Destroy the rat
         rat.destroy()
 
@@ -383,6 +406,19 @@ class Play extends Phaser.Scene {
             //console.log('game over')
             this.time.delayedCall(1000, () => { this.scene.start('gameOverScene', this.timer) })
         }
+    }
+
+    addChallenge() {
+        // spawn faster
+        if(this.dFLySpawnDelay > 2000){
+            this.dFlySpawnDelay -= 250
+            this.dFlySpawnTimer.delay = this.dFlySpawnDelay
+        }
+        if(this.ratSpawnDelay > 500) {
+            this.ratSpawnDelay -= 100
+            this.ratSpawnTimer.delay = this.ratSpawnDelay
+        }
+        console.log('add challenge')
     }
 
     addTime() {
