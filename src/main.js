@@ -10,7 +10,7 @@ let config = {
             debug: true
         }
     },
-    scene: [ Play ]
+    scene: [ Menu, Play, GameOver ]
 }
 
 let game = new Phaser.Game(config)
@@ -26,3 +26,5 @@ let keyUP
 let keyDOWN
 let keyLEFT
 let keyRIGHT
+let keyMENU
+let keyRESTART

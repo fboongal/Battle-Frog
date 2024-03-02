@@ -4,6 +4,9 @@ class Play extends Phaser.Scene {
     }
 
     init() {
+        //game timer
+        this.timer = 0
+
         // frog
         this.frogVelocity = 800
         this.frogMaxVelocity = 800
@@ -44,6 +47,9 @@ class Play extends Phaser.Scene {
          this.dFlyRandom = 0
          this.tempDFly = 0
          this.dFlyEaten = false
+
+         // castle
+         this.castleHP = 10
     }
 
     create(){
@@ -54,6 +60,10 @@ class Play extends Phaser.Scene {
         keyRIGHT = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D)
         keyUP = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W)
         keyDOWN = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S)
+
+        // castle sprite
+        this.castle = this.physics.add.sprite(100, game.config.height/2, 'castle')
+        this.castle.setImmovable()
 
         //creation of frog and its properties
         this.frog = this.physics.add.sprite(250, 375).setOrigin(0.5).setScale(0.5)
@@ -93,7 +103,7 @@ class Play extends Phaser.Scene {
          // Handle overlap between attack and rat
          this.physics.add.overlap(this.attack, this.ratGroup, this.attackRatCollision, null, this)
 
-        //create the eat sprite, but set it initially inactive
+        // create the eat sprite, but set it initially inactive
          this.eat = this.physics.add.sprite(-300, 0).setOrigin(0.5).setActive(false)
          this.eat.setSize(300, 75)
 
@@ -123,6 +133,30 @@ class Play extends Phaser.Scene {
             callbackScope: this,
             loop: true
         })
+
+        // ingame timer
+        this.gameTimer = this.time.addEvent({
+            delay: 1000,
+            callback: this.addTime,
+            callbackScope: this,
+            loop: true
+        })
+
+        let timeConfig = {
+            frontFamily: 'Courier',
+            fontSize: '42px',
+            //backgroundColor: 'rgba(128, 128, 128, 0.15)',
+            color: '#843605',
+            align: 'center',
+            padding: {
+                top: 5,
+                bottom: 5,
+            },
+            fixedWidth: 200
+        }
+
+        this.timerText = this.add.text(game.config.width/2, 0, this.timer, timeConfig).setOrigin(0.5, 0)
+        this.castleText = this.add.text(100, 0, this.castleHP, timeConfig).setOrigin(0.5, 0)
     }
 
     update() {
@@ -164,12 +198,18 @@ class Play extends Phaser.Scene {
         this.hoppingCode() // runs hopping code
         this.attackCode()// runs attack code
         this.eatCode()// runs eat/spit code
+        this.collisions()// runs collisions
+        
+    }
 
+    collisions() {
         // collisions
         this.physics.world.collide(this.frog, this.ratGroup, this.ratCollision, null, this) // rat vs frog
         this.physics.world.collide(this.frog, this.dFlyGroup, this.dFlyCollision, null, this) // dragon fly vs frog
         this.physics.world.collide(this.frogProjectileGroup, this.ratGroup, this.frogProjectileEnemyCollision, null, this) //frog projectile vs enemy
         this.physics.world.collide(this.frogProjectileGroup, this.dFlyGroup, this.frogProjectileEnemyCollision, null, this) //frog projectile vs dFly
+        this.physics.world.collide(this.castle, this.ratGroup, this.castleEnemyCollision, null, this) //castle vs rat
+        this.physics.world.collide(this.castle, this.dFlyGroup, this.castleEnemyCollision, null, this) //castle vs dragon fly
     }
 
     keyDownCode() {
@@ -280,7 +320,7 @@ class Play extends Phaser.Scene {
     }
 
     ratCollision(frog, rat) {
-        console.log('Rats!')
+        //console.log('rats!')
     }
 
     addDFly() {
@@ -312,11 +352,11 @@ class Play extends Phaser.Scene {
     }
 
     dFlyCollision(frog, DFly) {
-        console.log('dragon flew!')
+        // console.log('dragon flew by')
     }
 
     eatDFlyCollision(eat, dFly) {
-        //console.log('projectile hit')
+        // console.log('projectile hit')
         this.dFlyEaten = true
         dFly.destroy()
     }
@@ -328,11 +368,29 @@ class Play extends Phaser.Scene {
 
     attackRatCollision(attack, rat) {
 
-        console.log('rat hit')
+        // console.log('rat down!')
 
         // Destroy the rat
         rat.destroy()
 
+    }
+
+    castleEnemyCollision(castle, enemy) {
+        this.castleHP --
+        this.castleText.text = this.castleHP
+        enemy.destroy()
+        if(this.castleHP < 1) {
+            //console.log('game over')
+            this.time.delayedCall(1000, () => { this.scene.start('gameOverScene', this.timer) })
+        }
+    }
+
+    addTime() {
+        if(this.castleHP > 0 ){
+            this.timer++
+            this.timerText.text = this.timer
+            //console.log(this.timer)
+        }
     }
 }
 
