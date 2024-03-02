@@ -5,7 +5,7 @@ class Play extends Phaser.Scene {
 
     init() {
         // frog
-        this.frogVelocity = 700
+        this.frogVelocity = 800
         this.frogMaxVelocity = 800
         this.frogBounce = 0.5
         this.frogProjectileSpeed = 300
@@ -13,6 +13,20 @@ class Play extends Phaser.Scene {
         // hop points
         this.hopPoint = new Phaser.Math.Vector2()
         this.canHop = true
+
+        // hop buffer
+        this.pressedDown = false
+        this.pressedUp = false
+        this.inputBufferTimeUp = 0
+        this.inputBufferTimeDown = 0
+
+        // attack buffer
+        this.pressedAtk = false
+        this.inputBufferTimeAtk = 0
+        
+        // eat buffer
+        this.pressedEat = false
+        this.inputBufferTimeEat = 0
 
          // rat
          this.ratSpeed = -150
@@ -35,13 +49,18 @@ class Play extends Phaser.Scene {
     create(){
         // set up cursor keys
         cursors = this.input.keyboard.createCursorKeys()
+        
+        keyLEFT = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A)
+        keyRIGHT = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D)
+        keyUP = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W)
+        keyDOWN = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S)
 
         //creation of frog and its properties
         this.frog = this.physics.add.sprite(250, 375).setOrigin(0.5).setScale(0.5)
         this.frog.setCollideWorldBounds(true)
         this.frog.setBounce(this.frogBounce)
         this.frog.setImmovable()
-        this.frog.setMaxVelocity(0, this.frogMaxVelocity )
+        this.frog.setMaxVelocity(this.frogMaxVelocity, this.frogMaxVelocity )
         this.frog.setDragY(this.frogDragY)
         this.frog.setDepth(1)
         this.frog.destroyed = false 
@@ -107,71 +126,135 @@ class Play extends Phaser.Scene {
     }
 
     update() {
-        // movement inputs
-        if(Phaser.Input.Keyboard.JustDown(cursors.down)) {
-            if(this.frog.y < 525 && this.canHop) {
-                //hop to test
-                this.hopPoint.x = this.frog.x
-                this.hopPoint.y = this.frog.y + 150
-                this.physics.moveToObject(this.frog, this.hopPoint, this.frogVelocity)
-                this.canHop = false
-            }
+        // new hop input
+        if(Phaser.Input.Keyboard.JustDown(cursors.down) || Phaser.Input.Keyboard.JustDown(keyDOWN)) {
+            this.keyDownCode()
         }
-        else if(Phaser.Input.Keyboard.JustDown(cursors.up)) {
-            if(this.frog.y > 75 && this.canHop) {
-                //hop to test
-                this.hopPoint.x = this.frog.x
-                this.hopPoint.y = this.frog.y - 150
-                this.physics.moveToObject(this.frog, this.hopPoint, this.frogVelocity)
-                this.canHop = false
-            }
+
+        else if(Phaser.Input.Keyboard.JustDown(cursors.up) || Phaser.Input.Keyboard.JustDown(keyUP)) {
+            this.keyUpCode()
         }
 
         // attack input
-        if(Phaser.Input.Keyboard.JustDown(cursors.right)) {
-            this.attack.setPosition(this.frog.x + 75, this.frog.y).setActive(true)
-            this.time.delayedCall(100, () => { 
-                this.attack.setPosition(-300, 0) // remove sprite from canvas until called again
+        if(Phaser.Input.Keyboard.JustDown(cursors.right) || Phaser.Input.Keyboard.JustDown(keyRIGHT)) {
+            this.pressedAtk = true
+            this.inputBufferTimeAtk = this.time.delayedCall(150, () => { 
+                this.pressedAtk = false
             })
         }
+
+
         
         // eat input
-        if(Phaser.Input.Keyboard.JustDown(cursors.left)) {
-
-            if(!this.dFlyEaten) {
-                this.eat.setPosition(this.frog.x + 150, this.frog.y).setActive(true)
-                this.time.delayedCall(100, () => { // wait 1 tenth of a second
-                    this.eat.setPosition(-300, 0) // remove sprite from canvas until called again
-                })
-            }
-
-            else if (this.dFlyEaten) {
-                this.addFrogProjectile()
-                this.dFlyEaten = false
-            }
-
+        if(Phaser.Input.Keyboard.JustDown(cursors.left) || Phaser.Input.Keyboard.JustDown(keyLEFT)) {
+            this.pressedEat = true
+            this.inputBufferTimeEat = this.time.delayedCall(150, () => {
+                this.pressedEat = false
+            })
         }
 
-          // check to see if frog has reached hop point
-          const tolerance = 4;
+        // hopping stuff
+        if(keyDOWN.isDown) {
+            this.keyDownCode()
+        }
+        else if(keyUP.isDown){
+            this.keyUpCode()
+        }
 
-          const distance = Phaser.Math.Distance.BetweenPoints(this.frog, this.hopPoint)
-  
-          if (this.frog.body.speed > 0)
-          {
-  
-              if (distance < tolerance)
-              {
-                  this.frog.body.reset(this.hopPoint.x, this.hopPoint.y)
-                  this.canHop = true
-              }
-          }
+        this.hoppingCode() // runs hopping code
+        this.attackCode()// runs attack code
+        this.eatCode()// runs eat/spit code
 
         // collisions
         this.physics.world.collide(this.frog, this.ratGroup, this.ratCollision, null, this) // rat vs frog
         this.physics.world.collide(this.frog, this.dFlyGroup, this.dFlyCollision, null, this) // dragon fly vs frog
         this.physics.world.collide(this.frogProjectileGroup, this.ratGroup, this.frogProjectileEnemyCollision, null, this) //frog projectile vs enemy
         this.physics.world.collide(this.frogProjectileGroup, this.dFlyGroup, this.frogProjectileEnemyCollision, null, this) //frog projectile vs dFly
+    }
+
+    keyDownCode() {
+        this.pressedUp = false
+        this.pressedDown = true
+
+        this.inputBufferTimeDown = this.time.delayedCall(100, () => { 
+            this.pressedDown = false
+        })
+    }
+
+    keyUpCode() {
+        this.pressedDown = false
+        this.pressedUp = true
+
+        this.inputBufferTimeUp = this.time.delayedCall(100, () => { 
+            this.pressedUp = false
+        })
+    }
+
+    hoppingCode() {
+         // DOWN
+        // if above the bottom lane, is on a hop point (can hop) and has pressed down in the last .1 seconds...
+        if(this.frog.y < 525 && this.canHop && this.pressedDown) {
+            this.hopPoint.x = this.frog.x
+            this.hopPoint.y = this.frog.y + 150
+            this.physics.moveToObject(this.frog, this.hopPoint, this.frogVelocity)
+            this.canHop = false
+        }
+        // UP
+        // if below the top lane, is on a hop point (can hop) and has pressed down in the last .1 seconds...
+        if(this.frog.y > 75 && this.canHop && this.pressedUp) {
+            this.hopPoint.x = this.frog.x
+            this.hopPoint.y = this.frog.y - 150
+            this.physics.moveToObject(this.frog, this.hopPoint, this.frogVelocity)
+            this.canHop = false
+        }
+
+        // check to see if frog has reached hop point
+        const tolerance = 20;
+
+        const distance = Phaser.Math.Distance.BetweenPoints(this.frog, this.hopPoint)
+  
+        if (this.frog.body.speed > 0)
+        {
+  
+            if (distance < tolerance)
+            {
+                this.frog.body.reset(this.hopPoint.x, this.hopPoint.y)
+                this.waitAfterHopTime = this.time.delayedCall(50, () => { 
+                    this.canHop = true
+                })
+            }
+        }
+    }
+
+    attackCode(){
+        // attack code
+        if(this.canHop && this.pressedAtk) {
+            this.attack.setPosition(this.frog.x + 75, this.frog.y).setActive(true)
+
+            this.inputBufferTimeAtk = this.time.delayedCall(100, () => {
+                this.attack.setPosition(-300, 0) // remove sprite from canvas until called again
+            })
+
+            this.pressedAtk = false
+        }
+    }
+
+    eatCode() {
+        // eating code
+        if(this.canHop && !this.dFlyEaten && this.pressedEat) {
+            this.eat.setPosition(this.frog.x + 150, this.frog.y).setActive(true)
+            this.time.delayedCall(100, () => { // wait 1 tenth of a second
+                this.eat.setPosition(-300, 0) // remove sprite from canvas until called again
+
+            })
+            this.pressedEat = false
+        }
+
+        else if (this.canHop && this.dFlyEaten && this.pressedEat) {
+            this.addFrogProjectile()
+            this.dFlyEaten = false
+            this.pressedEat = false
+        }
     }
 
     addRat() {
