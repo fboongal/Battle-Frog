@@ -1,7 +1,7 @@
 class FrogProjectile extends Phaser.Physics.Arcade.Sprite {
     constructor(scene, velocity, spawnX, spawnY) {
         // call Phaser Physics Sprite constructor
-        super(scene, spawnX, spawnY)
+        super(scene, spawnX, spawnY, 'helmet')
 
         this.parentScene = scene               
 
@@ -13,6 +13,8 @@ class FrogProjectile extends Phaser.Physics.Arcade.Sprite {
     }
 
     update() {
+        this.rotation += 0.025
+
         if(this.x > game.config.width) {
             this.destroy()
         }
