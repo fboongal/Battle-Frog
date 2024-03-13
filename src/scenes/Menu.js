@@ -15,6 +15,8 @@ class Menu extends Phaser.Scene {
         this.load.image('dfly', '/img/dfly.png')
         this.load.image('helmet', '/img/helmet.png')
         this.load.image('rain', '/img/rain.png')
+        this.load.image('button', '/img/button.png')
+        this.load.image('title', '/img/title.png')
 
         this.load.audio('music', '/sounds/BattleFrogsTheme.wav')
         this.load.audio('hopsound', '/sounds/hopsound.wav')
@@ -41,8 +43,14 @@ class Menu extends Phaser.Scene {
     }
 
     create(){
+        // set up cursor keys
+        cursors = this.input.keyboard.createCursorKeys()
+
+        // adding title screen
+        this.add.image(centerX, centerY, 'title')
         this.bgMusic = this.sound.add('music', {volume: 1, loop: true})
 
+        // music
         if(!this.musicPlayed){
             this.bgMusic.play()
             this.musicPlayed = true
@@ -52,10 +60,11 @@ class Menu extends Phaser.Scene {
             this.musicPlayed = false
         }
 
-        this.scene.start('playScene')
     }
 
     update(){
-
+        if (Phaser.Input.Keyboard.JustDown(cursors.space)) {
+            this.scene.start('playScene')
+        }
     }
 }
