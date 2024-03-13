@@ -483,7 +483,7 @@ class Play extends Phaser.Scene {
         this.pressedUp = false
         this.pressedDown = true
 
-        this.inputBufferTimeDown = this.time.delayedCall(100, () => { 
+        this.inputBufferTimeDown = this.time.delayedCall(150, () => { 
             this.pressedDown = false
         })
     }
@@ -492,7 +492,7 @@ class Play extends Phaser.Scene {
         this.pressedDown = false
         this.pressedUp = true
 
-        this.inputBufferTimeUp = this.time.delayedCall(100, () => { 
+        this.inputBufferTimeUp = this.time.delayedCall(150, () => { 
             this.pressedUp = false
         })
     }
@@ -608,43 +608,46 @@ class Play extends Phaser.Scene {
 
     addRat() {
 
-        this.ratRandom = Phaser.Math.Between(0, 3)
+        if(!this.paused){
+            this.ratRandom = Phaser.Math.Between(0, 3)
 
-        if(this.ratRandom == 0){
-            this.ratPos.y = this.laneOneY - 10
-            this.laneY = this.ratPos.y
-        }
-        else if(this.ratRandom == 1) {
-            this.ratPos.y = this.laneTwoY - 10
-            this.laneY = this.ratPos.y
-        }
-        else if(this.ratRandom == 2) {
-            this.ratPos.y = this.laneThreeY - 10
-            this.laneY = this.ratPos.y
-        }
-        else if(this.ratRandom == 3) {
-            this.ratPos.y = this.laneFourY - 10
-            this.laneY = this.ratPos.y
-        }
-        
-        this.ratEliteRandom = Phaser.Math.Between(0, 3) // 1/4 chance of spawning in an elite rat
-        if(this.ratEliteRandom == 3){
-            this.elite = true
+            if(this.ratRandom == 0){
+                this.ratPos.y = this.laneOneY - 10
+                this.laneY = this.ratPos.y
+            }
+            else if(this.ratRandom == 1) {
+                this.ratPos.y = this.laneTwoY - 10
+                this.laneY = this.ratPos.y
+            }
+            else if(this.ratRandom == 2) {
+                this.ratPos.y = this.laneThreeY - 10
+                this.laneY = this.ratPos.y
+            }
+            else if(this.ratRandom == 3) {
+                this.ratPos.y = this.laneFourY - 10
+                this.laneY = this.ratPos.y
+            }
+            
+            this.ratEliteRandom = Phaser.Math.Between(0, 3) // 1/4 chance of spawning in an elite rat
+            if(this.ratEliteRandom == 3){
+                this.elite = true
+            }
+    
+            this.rat = new Rat(this, this.ratSpeed, this.ratPos.y, this.laneY, this.elite).setScale(0.5)
+    
+            this.ratGroup.add(this.rat)
+    
+            if(!this.elite){
+                this.rat.anims.play('ratrunning')
+            }
+            else {
+                this.rat.anims.play('eliteratrunning')
+            }
+            
+    
+            this.elite = false // reset elite rat bool
         }
 
-        this.rat = new Rat(this, this.ratSpeed, this.ratPos.y, this.laneY, this.elite).setScale(0.5)
-
-        this.ratGroup.add(this.rat)
-
-        if(!this.elite){
-            this.rat.anims.play('ratrunning')
-        }
-        else {
-            this.rat.anims.play('eliteratrunning')
-        }
-        
-
-        this.elite = false // reset elite rat bool
     }
 
     ratCollision(frog, rat) {
@@ -669,29 +672,31 @@ class Play extends Phaser.Scene {
     }
 
     addDFly() {
+        if(!this.paused){
+            this.dFlyRandom = Phaser.Math.Between(0, 3)
 
-        this.dFlyRandom = Phaser.Math.Between(0, 3)
+            if(this.dFlyRandom == 0){
+                this.dFlyPos.y = this.laneOneY - 10
+                this.laneY = this.dFlyPos.y
+            }
+            else if(this.dFlyRandom == 1) {
+                this.dFlyPos.y = this.laneTwoY - 10
+                this.laneY = this.dFlyPos.y
+            }
+            else if(this.dFlyRandom == 2) {
+                this.dFlyPos.y = this.laneThreeY - 10
+                this.laneY = this.dFlyPos.y
+            }
+            else if(this.dFlyRandom == 3) {
+                this.dFlyPos.y = this.laneFourY - 10
+                this.laneY = this.dFlyPos.y
+            }
+    
+            this.dFly = new DFly(this, this.dFlySpeed, this.dFlyPos.y, this.laneY).setScale(0.75)
+    
+            this.dFlyGroup.add(this.dFly)
+        }
 
-        if(this.dFlyRandom == 0){
-            this.dFlyPos.y = this.laneOneY - 10
-            this.laneY = this.dFlyPos.y
-        }
-        else if(this.dFlyRandom == 1) {
-            this.dFlyPos.y = this.laneTwoY - 10
-            this.laneY = this.dFlyPos.y
-        }
-        else if(this.dFlyRandom == 2) {
-            this.dFlyPos.y = this.laneThreeY - 10
-            this.laneY = this.dFlyPos.y
-        }
-        else if(this.dFlyRandom == 3) {
-            this.dFlyPos.y = this.laneFourY - 10
-            this.laneY = this.dFlyPos.y
-        }
-
-        this.dFly = new DFly(this, this.dFlySpeed, this.dFlyPos.y, this.laneY).setScale(0.75)
-
-        this.dFlyGroup.add(this.dFly)
     }
 
     addFrogProjectile() {
