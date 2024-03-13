@@ -60,6 +60,10 @@ class Menu extends Phaser.Scene {
             this.musicPlayed = false
         }
 
+        // add buttons + text
+        this.add.image(centerX, centerY+170, 'button')
+        this.add.image(centerX-150, centerY+20, 'button').setScale(0.75)
+
     }
 
     update(){
