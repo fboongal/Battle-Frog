@@ -11,6 +11,8 @@ class DFly extends Phaser.Physics.Arcade.Sprite {
         this.hit = false 
         this.spitHit = false
 
+        this.died = false
+
         // set up physics sprite
         this.parentScene.add.existing(this)    
         this.parentScene.physics.add.existing(this) 

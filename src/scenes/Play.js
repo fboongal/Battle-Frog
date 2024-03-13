@@ -483,7 +483,7 @@ class Play extends Phaser.Scene {
         this.pressedUp = false
         this.pressedDown = true
 
-        this.inputBufferTimeDown = this.time.delayedCall(150, () => { 
+        this.inputBufferTimeDown = this.time.delayedCall(125, () => { 
             this.pressedDown = false
         })
     }
@@ -492,7 +492,7 @@ class Play extends Phaser.Scene {
         this.pressedDown = false
         this.pressedUp = true
 
-        this.inputBufferTimeUp = this.time.delayedCall(150, () => { 
+        this.inputBufferTimeUp = this.time.delayedCall(125, () => { 
             this.pressedUp = false
         })
     }
@@ -828,7 +828,18 @@ class Play extends Phaser.Scene {
                 //console.log('tween done')
                 if(enemy.hp < 1){
                     // Destroy the enemy
-                    enemy.destroy()
+                    //enemy.destroy()
+
+                    //change  instead of destroy
+                    enemy.alpha = 0
+                    enemy.setVelocityX(0)
+                    enemy.body.checkCollision.none = true
+                    enemy.died = true
+
+                    this.time.delayedCall(2000, () => { 
+                        enemy.destroy()
+                    })
+
                     this.currentXP++
                     this.xpText.text = this.currentXP + '/' + this.xpNeed
                 }
@@ -904,7 +915,7 @@ class Play extends Phaser.Scene {
         this.upgradeText = this.add.text(game.config.width/2, game.config.height/2 - 200, 'Choose Your Upgrade', skillConfig).setOrigin(0.5)
         this.skillOneText = this.add.text(game.config.width/2, game.config.height/2 - 100, 'Spit Through Enemies', skillConfig).setOrigin(0.5)
         this.skillTwoText = this.add.text(game.config.width/2, game.config.height/2, 'Increase Attack Range', skillConfig).setOrigin(0.5)
-        this.skillThreeText = this.add.text(game.config.width/2, game.config.height/2 + 100, 'Increase Damage', skillConfig).setOrigin(0.5)
+        this.skillThreeText = this.add.text(game.config.width/2, game.config.height/2 + 100, 'Dont Choose Me!', skillConfig).setOrigin(0.5)
     }
 
     projectileSkill() {
