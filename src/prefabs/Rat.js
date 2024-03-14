@@ -7,15 +7,17 @@ class Rat extends Phaser.Physics.Arcade.Sprite {
 
         this.parentScene = scene
         if(!elite) {
-            this.hp = 1
+            this.hp = 100
         }
         else {
-            this.hp = 3
+            this.hp = 300
             this.setTexture('eliteratrun')
         }
         
         this.hit = false     
         this.spitHit = false
+
+        this.speed = velocity
         
         this.died = false
 
@@ -49,7 +51,6 @@ class Rat extends Phaser.Physics.Arcade.Sprite {
 
         if (this.distance < tolerance){
             this.setVelocityY(0)
-            //console.log('tolerable')
         }
         else{
             if(this.goUp){
@@ -73,6 +74,39 @@ class Rat extends Phaser.Physics.Arcade.Sprite {
     spitHitTimer() {
         this.parentScene.time.delayedCall(500, () => { 
             this.spitHit = false 
+        })
+    }
+
+    knockBack(castle) {
+        this.parentScene.tweens.add({
+            targets: this,
+            x: this.x + this.parentScene.knockBackForce,
+            ease: 'Linear',
+            duration: 75,
+            onComplete: () => {
+                this.knockedBack = false
+                if(this.hp < 1 || castle){ //if enemy has no health left or has collided with the castle
+                    //change  instead of destroy
+                    this.alpha = 0
+                    this.setVelocityX(0)
+                    this.body.checkCollision.none = true
+                    this.died = true
+                    if(!castle){
+                        this.parentScene.currentXP++
+                        this.parentScene.xpText.text = this.parentScene.currentXP + '/' + this.parentScene.xpNeed
+                    }
+
+
+                    this.parentScene.time.delayedCall(2000, () => { 
+                        this.destroy()
+                    })
+                }
+                
+                else if(this.hp > 0){ // if enemy is still alive
+                    this.setVelocityX(this.speed)
+                }
+                this.parentScene.knockBackForce = this.parentScene.baseKnockBackForce
+            }
         })
     }
 }

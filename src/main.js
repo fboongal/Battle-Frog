@@ -10,7 +10,7 @@ let config = {
     physics: {
         default: 'arcade',
         arcade: {
-            debug: true
+            //debug: true
         }
     },
     scene: [ Menu, Play, GameOver ]
@@ -31,4 +31,4 @@ let keyLEFT
 let keyRIGHT
 let keyMENU
 let keyRESTART
-let keyENTER
+let keySPACE

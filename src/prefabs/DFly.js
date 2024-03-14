@@ -11,6 +11,8 @@ class DFly extends Phaser.Physics.Arcade.Sprite {
         this.hit = false 
         this.spitHit = false
 
+        this.speed = velocity
+
         this.died = false
 
         // set up physics sprite
@@ -62,6 +64,27 @@ class DFly extends Phaser.Physics.Arcade.Sprite {
     spitHitTimer() {
         this.parentScene.time.delayedCall(500, () => { 
             this.spitHit = false 
+        })
+    }
+
+    knockBack(castle) {
+        this.parentScene.tweens.add({
+            targets: this,
+            x: this.x + this.parentScene.knockBackForce,
+            ease: 'Linear',
+            duration: 75,
+            onComplete: () => {
+                this.knockedBack = false
+                if(this.hp < 1 || castle){
+                    this.destroy()
+                    this.parentScene.currentXP++
+                    this.parentScene.xpText.text = this.parentScene.currentXP + '/' + this.parentScene.xpNeed
+                }
+                else {
+                    this.setVelocityX(this.speed)
+                }
+                this.parentScene.knockBackForce = this.parentScene.baseKnockBackForce
+            }
         })
     }
 }

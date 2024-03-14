@@ -13,6 +13,8 @@ class Play extends Phaser.Scene {
         this.frogBounce = 0.5
         this.frogProjectileSpeed = 500
         this.blocked = false
+        this.atkDmg = 100
+        this.spitDmg = 100
 
         // hop points
         this.hopPoint = new Phaser.Math.Vector2()
@@ -45,21 +47,23 @@ class Play extends Phaser.Scene {
         this.inputBufferTimeEat = 0
         this.eatAnim = true
         this.spitAnim = false
+        this.eating = false
 
         // rat
         this.ratSpeed = -125
-        this.ratSpawnDelay = 2000
+        this.ratSpawnDelay = 3000
         this.ratStartSpawnDelay = 1000
         this.ratPos = new Phaser.Math.Vector2()
         this.ratRandom = 0
         this.ratEliteRandom
         this.tempRat = 0
         this.elite = false
+        this.eliteCanSpawn = false
 
         // dragon fly 
         this.dFlySpeed = -200
         this.dFlyStartSpawnDelay = 3000
-        this.dFlySpawnDelay = 6000
+        this.dFlySpawnDelay = 8000
         this.dFlyPos = new Phaser.Math.Vector2()
         this.dFlyRandom = 0
         this.tempDFly = 0
@@ -96,8 +100,9 @@ class Play extends Phaser.Scene {
         this.enemiesHit = 0
         this.enemiesCanHit = 0
 
-
-         
+        //increase range skill
+        this.attackOffSet = 75
+        this.atkRangeTier = 1
     }
 
     create(){
@@ -108,7 +113,7 @@ class Play extends Phaser.Scene {
         keyRIGHT = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D)
         keyUP = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W)
         keyDOWN = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S)
-        keyENTER = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ENTER)
+        keySPACE = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE)
 
         this.bgSprite = this.add.sprite(game.config.width/2, game.config.height/2, 'bg')
 
@@ -138,17 +143,19 @@ class Play extends Phaser.Scene {
         this.ratGroup = this.add.group({
             runChildUpdate: true // make sure update runs on group children
         })
+        /*
         this.time.delayedCall(this.ratStartSpawnDelay, () => { 
             this.addRat()
-        })
+        })*/
 
         // set up dragonfly group
         this.dFlyGroup = this.add.group({
             runChildUpdate: true // make sure update runs on group children
         })
+        /*
         this.time.delayedCall(this.dFlyStartSpawnDelay, () => { 
             this.addDFly()
-        })
+        })*/
 
         //set up frog projectile group
         this.frogProjectileGroup = this.add.group({
@@ -172,10 +179,14 @@ class Play extends Phaser.Scene {
 
         // challenge timer that increases spawn rate of enemies and dFlys
         this.challengeTimer = this.time.addEvent({
-            delay: 7500,
+            delay: 9000,
             callback: this.addChallenge,
             callbackScope: this,
             loop: true
+        })
+
+        this.time.delayedCall(10000, () => { // after x seconds elite enemies can spawn
+            this.eliteCanSpawn = true
         })
 
         // spawn enemies every X seconds
@@ -314,7 +325,7 @@ class Play extends Phaser.Scene {
         this.frog.on('animationcomplete', function () {
             if(this.eatAnim) {
                 this.eat.setPosition(this.frog.x + 150, this.frog.y +10).setActive(true)
-                this.time.delayedCall(150, () => { // wait 1 tenth of a second
+                this.time.delayedCall(100, () => { // wait 1 tenth of a second
                     this.eat.setPosition(-300, 0) // remove sprite from canvas until called again
                     if(this.dFlyEaten){
                         this.frog.anims.play('eaten')
@@ -324,13 +335,15 @@ class Play extends Phaser.Scene {
                         this.frog.anims.play('idle')
                         //this.canHop = true // testing to see locked in place
                     }
+
+                    this.eating = false
                 })
             }
             else if(this.spitAnim){
                 this.addFrogProjectile()
-                this.time.delayedCall(150, () => { // wait 1 tenth of a second
+                this.time.delayedCall(50, () => { // wait 1 tenth of a second
                     this.frog.anims.play('idle')
-                    //this.canHop = true // testing to see locked in place
+                    this.eating = false
                 })
             }
         }, this)
@@ -344,18 +357,6 @@ class Play extends Phaser.Scene {
     }
 
     update() {
-        if(Phaser.Input.Keyboard.JustDown(cursors.up)) {
-            if(!this.paused){
-                this.paused = true
-                this.physics.pause()
-            }
-            else{
-                this.paused = false
-                this.physics.resume()
-            }
-            
-        }
-
         if(!this.paused){
             // rain
             this.rain.tilePositionY -= 7
@@ -395,10 +396,10 @@ class Play extends Phaser.Scene {
 
             this.hoppingCode() // runs hopping code
             this.attackCode()// runs attack code
-            this.eatCode()// runs eat/spit code
+            this.eatSpitCode()// runs eat/spit code
             this.collisions()// runs collisions
             this.xpCode() // runs xp code
-        }
+            }
         else if(this.paused) {
 
             // highlight text
@@ -442,16 +443,17 @@ class Play extends Phaser.Scene {
                 }
             }
 
-            if(Phaser.Input.Keyboard.JustDown(keyENTER)) {
+            if(Phaser.Input.Keyboard.JustDown(keySPACE)) {
                 if(this.selectionOne){
                     this.projectileSkill()
                 }
     
                 else if(this.selectionTwo){
+                    this.increaseAttackRange()
                 }
     
                 else if(this.selectionThree){
-                    
+                    this.increaseDamage()
                 }
 
                 this.upgradeText.destroy()
@@ -474,7 +476,7 @@ class Play extends Phaser.Scene {
         this.physics.world.collide(this.frog, this.ratGroup, this.ratCollision, null, this) // rat vs frog
         this.physics.world.collide(this.frog, this.dFlyGroup, this.dFlyCollision, null, this) // dragon fly vs frog
         this.physics.world.collide(this.frogProjectileGroup, this.ratGroup, this.frogProjectileEnemyCollision, null, this) //frog projectile vs enemy
-        this.physics.world.collide(this.frogProjectileGroup, this.dFlyGroup, this.frogProjectileEnemyCollision, null, this) //frog projectile vs dFly
+        this.physics.world.collide(this.frogProjectileGroup, this.dFlyGroup, this.attackDFlyCollision, null, this) //frog projectile vs dFly
         this.physics.world.collide(this.castle, this.ratGroup, this.castleEnemyCollision, null, this) //castle vs rat
         this.physics.world.collide(this.castle, this.dFlyGroup, this.castleEnemyCollision, null, this) //castle vs dragon fly
     }
@@ -498,9 +500,9 @@ class Play extends Phaser.Scene {
     }
 
     hoppingCode() {
-         // DOWN
+        // DOWN
         // if above the bottom lane, is on a hop point (can hop) and has pressed down in the last .1 seconds...
-        if(this.frog.y < 475 && this.canHop && this.pressedDown) {
+        if(this.frog.y < 475 && this.canHop && this.pressedDown && !this.eating) {
             this.hopPoint.x = this.frog.x - 15
             this.hopPoint.y = this.frog.y + 100
             this.physics.moveToObject(this.frog, this.hopPoint, this.frogVelocity)
@@ -510,7 +512,7 @@ class Play extends Phaser.Scene {
         }
         // UP
         // if below the top lane, is on a hop point (can hop) and has pressed down in the last .1 seconds...
-        if(this.frog.y > 200 && this.canHop && this.pressedUp) {
+        if(this.frog.y > 200 && this.canHop && this.pressedUp && !this.eating) {
             this.hopPoint.x = this.frog.x + 15
             this.hopPoint.y = this.frog.y - 100
             this.physics.moveToObject(this.frog, this.hopPoint, this.frogVelocity)
@@ -540,6 +542,8 @@ class Play extends Phaser.Scene {
                     this.frog.anims.play('block')
                 }
 
+                this.eating = false //when you hop before completing eat anim, set to eating to false
+
                 this.frog.body.reset(this.hopPoint.x, this.hopPoint.y)
                 this.waitAfterHopTime = this.time.delayedCall(75, () => { 
                     this.canHop = true
@@ -550,10 +554,10 @@ class Play extends Phaser.Scene {
 
     attackCode(){
         // attack code
-        if(this.canHop && this.pressedAtk && !this.attacking) {
+        if(this.canHop && this.pressedAtk && !this.attacking && !this.eating) {
             //console.log('attacked')
             this.attacking = true
-            this.attack.setPosition(this.frog.x + 100, this.frog.y).setActive(true)
+            this.attack.setPosition(this.frog.x + this.attackOffSet, this.frog.y).setActive(true)
             if(!this.dFlyEaten){
                 this.frog.anims.play('swing')
                 this.sound.play('swingsound')
@@ -584,23 +588,23 @@ class Play extends Phaser.Scene {
         }
     }
 
-    eatCode() {
+    eatSpitCode() {
         // eating code
         if(this.canHop && !this.dFlyEaten && this.pressedEat && !this.attacking) {
+            this.eating = true
             this.spitAnim = false
             this.eatAnim = true
             this.frog.anims.play('eat')
             this.sound.play('eatsound', {volume: 1.5})
-            //this.canHop = false // testing to see locked in place
             this.pressedEat = false
         }
-
+        //spit code
         else if (this.canHop && this.dFlyEaten && this.pressedEat && !this.attacking) {
+            this.eating = true
             this.eatAnim = false
             this.spitAnim = true
             this.frog.anims.play('eat')
             this.sound.play('spitsound', {volume: 1.75})
-            //this.canHop = false // testing to see locked in place
             this.dFlyEaten = false
             this.pressedEat = false
         }
@@ -628,10 +632,13 @@ class Play extends Phaser.Scene {
                 this.laneY = this.ratPos.y
             }
             
-            this.ratEliteRandom = Phaser.Math.Between(0, 3) // 1/4 chance of spawning in an elite rat
-            if(this.ratEliteRandom == 3){
-                this.elite = true
+            if(this.eliteCanSpawn){
+                this.ratEliteRandom = Phaser.Math.Between(0, 3) // 1/4 chance of spawning in an elite rat
+                if(this.ratEliteRandom == 3){
+                    this.elite = true
+                }
             }
+
     
             this.rat = new Rat(this, this.ratSpeed, this.ratPos.y, this.laneY, this.elite).setScale(0.5)
     
@@ -652,17 +659,17 @@ class Play extends Phaser.Scene {
 
     ratCollision(frog, rat) {
 
-        if(!this.blocked) {
+        if(!this.blocked && !this.eating) {
             this.blocked = true
             this.frog.anims.play('block')
             this.knockBackForce = this.baseKnockBackForce * 3
             this.knockBack(rat)
 
             this.time.delayedCall(150, () => { // wait 1 tenth of a second
-                if(this.dFlyEaten){
+                if(this.dFlyEaten && !this.eating){
                     this.frog.anims.play('eaten')
                 }
-                else{
+                else if(!this.eating){
                     this.frog.anims.play('idle')
                 }
                 this.blocked = false
@@ -715,7 +722,6 @@ class Play extends Phaser.Scene {
             this.dFlyEaten = true
             dFly.setVelocityX(0)
             this.time.delayedCall(100, () => { dFly.destroy(), this.currentXP++, this.updateXP()})
-            console.log('eat')
         }
 
     }
@@ -735,6 +741,21 @@ class Play extends Phaser.Scene {
 
     frogProjectileEnemyCollision(frogProjectile, enemy) {
         if(!enemy.spitHit){
+
+            //console.log(enemy.hp)
+            if(enemy.hit == false && !enemy.spitHit){
+                enemy.hp -= this.spitDmg
+                
+                enemy.spitHit = true
+                enemy.spitHitTimer()
+    
+                enemy.hit = true
+                enemy.hitTimer()
+
+                this.sound.play('hitsound', {volume: 0.5})
+                this.enemyFlash(enemy)
+            }
+
             if(this.enemiesHit >= this.enemiesCanHit){
                 frogProjectile.destroy() // can turn this off to make it go through enemies!
                 this.enemiesHit = 0
@@ -742,24 +763,7 @@ class Play extends Phaser.Scene {
             else {
                 this.enemiesHit++
             }
-            
-            this.sound.play('hitsound', {volume: 0.5})
-            this.enemyFlash(enemy)
-    
-            //console.log(enemy.hp)
-            if(enemy.hit == false && !enemy.spitHit){
-                enemy.hp--
-                
-                enemy.spitHit = true
-                enemy.spitHitTimer()
-    
-                enemy.hit = true
-                enemy.hitTimer()
-            }
         }
-
-
-        console.log('collision')
     }
 
     attackRatCollision(attack, rat) {
@@ -768,7 +772,7 @@ class Play extends Phaser.Scene {
             // Destroy the rat
             this.sound.play('hitsound', {volume: 0.5})
             this.enemyFlash(rat)
-            rat.hp--
+            rat.hp -= this.atkDmg
             rat.hit = true
             rat.hitTimer()
         }
@@ -779,11 +783,11 @@ class Play extends Phaser.Scene {
         if(this.castleHP > 0) {
             this.castleHP --
         }
-        
         this.castleText.text = this.castleHP
-        enemy.destroy()
+
+        enemy.knockBack(true)
+        
         if(this.castleHP < 1) {
-            //console.log('game over')
             this.time.delayedCall(1000, () => { this.scene.start('gameOverScene', this.timer) })
         }
     }
@@ -797,16 +801,17 @@ class Play extends Phaser.Scene {
     }
 
     addChallenge() {
-        // spawn faster
-        if(this.dFLySpawnDelay > 2000){
-            this.dFlySpawnDelay -= 250
-            this.dFlySpawnTimer.delay = this.dFlySpawnDelay
+        if(!this.paused){
+            // spawn faster
+            if(this.dFLySpawnDelay > 1500){
+                this.dFlySpawnDelay -= 300
+                this.dFlySpawnTimer.delay = this.dFlySpawnDelay
+            }
+            if(this.ratSpawnDelay > 450) {
+                this.ratSpawnDelay -= 125
+                this.ratSpawnTimer.delay = this.ratSpawnDelay
+            }
         }
-        if(this.ratSpawnDelay > 500) {
-            this.ratSpawnDelay -= 100
-            this.ratSpawnTimer.delay = this.ratSpawnDelay
-        }
-        //console.log('add challenge')
     }
 
     addTime() {
@@ -818,38 +823,13 @@ class Play extends Phaser.Scene {
     }
 
     knockBack(enemy) {
-        enemy.setVelocityX(0)
-        this.tweens.add({
-            targets: enemy,
-            x: enemy.x + this.knockBackForce,
-            ease: 'Linear',
-            duration: 75,
-            onComplete: () => {
-                //console.log('tween done')
-                if(enemy.hp < 1){
-                    // Destroy the enemy
-                    //enemy.destroy()
+        if(!enemy.knockedBack){
+            enemy.knockedBack = true
+            enemy.setVelocityX(0)
 
-                    //change  instead of destroy
-                    enemy.alpha = 0
-                    enemy.setVelocityX(0)
-                    enemy.body.checkCollision.none = true
-                    enemy.died = true
+            enemy.knockBack(false)
+        }
 
-                    this.time.delayedCall(2000, () => { 
-                        enemy.destroy()
-                    })
-
-                    this.currentXP++
-                    this.xpText.text = this.currentXP + '/' + this.xpNeed
-                }
-                else{
-                    enemy.setVelocityX(this.ratSpeed) // i think theres a game breaking bug here
-                    //create a knockedBack bool in enemies when hit by knockback, set to true until knock back is over
-                }
-                this.knockBackForce = this.baseKnockBackForce
-            }
-        })
     }
 
     eatKnockBack(enemy) {
@@ -882,7 +862,7 @@ class Play extends Phaser.Scene {
             this.levelText.text = 'LVL: ' + this.currentLevel
             this.currentXP = 0
             this.updateXP()
-            this.xpNeed *= 3
+            this.xpNeed *= 1.5
             this.skillScreen()
             
         }
@@ -922,6 +902,17 @@ class Play extends Phaser.Scene {
         console.log('projectile skill')
         this.projectileTierOne = true
         this.enemiesCanHit++
+    }
+
+    increaseAttackRange(){
+        this.attack.scaleX *= 1.2
+        this.attackOffSet *= 1.2
+        this.atkRangeTier ++
+    }
+
+    increaseDamage() {
+        this.atkDmg *= 1.5
+        this.spitDmg *= 1.5
     }
 }
 
