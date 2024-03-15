@@ -36,8 +36,8 @@ class Menu extends Phaser.Scene {
         this.load.image('10HP', '/img/HP/10.png') 
 
         // load bitmap font
-        this.load.bitmapFont('BC', 'font/BC.png', 'font/BC.xml')
-        this.load.bitmapFont('TH', 'font/TH.png', 'font/TH.xml')
+        this.load.bitmapFont('BC', 'font/BC.png', 'font/BC.xml') // found from https://www.dafont.com/black-castle.font by Richard William Mueller
+        this.load.bitmapFont('TH', 'font/TH.png', 'font/TH.xml') // found from https://www.dafont.com/trashhand.font by Luce Avérous
 
         //this.load.audio('music', '/sounds/BattleFrogsTheme.wav')
         this.load.audio('music', '/sounds/FrogThemeDrums.wav')
