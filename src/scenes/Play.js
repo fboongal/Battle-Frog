@@ -55,15 +55,23 @@ class Play extends Phaser.Scene {
         this.ratStartSpawnDelay = 1000
         this.ratPos = new Phaser.Math.Vector2()
         this.ratRandom = 0
+        this.whichRat = 0
+        //elite rats
         this.ratEliteRandom
-        this.tempRat = 0
         this.elite = false
         this.eliteCanSpawn = false
+        //purple rats
+        this.purpleRandom
+        this.purple = false
+        this.purpleCanSpawn = false
+        // rat king
+        this.king = false
+        this.kingCanSpawn = false
 
         // dragon fly 
         this.dFlySpeed = -200
-        this.dFlyStartSpawnDelay = 3000
         this.dFlySpawnDelay = 8000
+        this.dFlyStartSpawnDelay = 3000
         this.dFlyPos = new Phaser.Math.Vector2()
         this.dFlyRandom = 0
         this.tempDFly = 0
@@ -103,9 +111,12 @@ class Play extends Phaser.Scene {
         //increase range skill
         this.attackOffSet = 75
         this.atkRangeTier = 1
+
+        //depth 
+        this.laneDepthMod 
     }
 
-    create(){
+    create(menuScene){
         // set up cursor keys
         cursors = this.input.keyboard.createCursorKeys()
         
@@ -124,10 +135,21 @@ class Play extends Phaser.Scene {
         this.lilyPad = this.add.sprite(200, this.laneFourY, 'lilypad').setScale(0.65)
 
         // castle sprite
-        this.castle = this.physics.add.sprite(100, game.config.height/2, 'castle').setScale(0.9)
+        this.castle = this.physics.add.sprite(50, game.config.height - 175, 'castle').setScale(0.9)
         this.castle.setImmovable()
-        this.castle.setSize(75, 500)
+        this.castle.setSize(75, 250)
         this.castle.alpha = 0
+        this.castleTwo = this.physics.add.sprite(100, 200, 'castle').setScale(0.9)
+        this.castleTwo.setImmovable()
+        this.castleTwo.setSize(75, 250)
+        this.castleTwo.alpha = 0
+
+        this.castleGroup = this.add.group()
+        this.castleGroup.add(this.castle)
+        this.castleGroup.add(this.castleTwo)
+
+        //fake castle for flash fx
+        this.fakeCastle = this.add.sprite(this.game.config.width/2, this.game.config.height/2, 'fakecastle')
 
         //creation of frog and its properties
         this.frog = this.physics.add.sprite(230, 290, 'frogeat').setOrigin(0.5).setScale(0.5)
@@ -164,7 +186,7 @@ class Play extends Phaser.Scene {
 
         // Create the attack sprite, but set it initially inactive
          this.attack = this.physics.add.sprite(-300, 0, 'atk').setOrigin(0.5).setActive(false).setAlpha(0.5)
-         this.attack.setSize(150, 75)
+         this.attack.setSize(150, 50)
 
          // Handle overlap between attack and rat
          this.physics.add.overlap(this.attack, this.ratGroup, this.attackRatCollision, null, this)
@@ -179,14 +201,68 @@ class Play extends Phaser.Scene {
 
         // challenge timer that increases spawn rate of enemies and dFlys
         this.challengeTimer = this.time.addEvent({
-            delay: 9000,
+            delay: 7500,
             callback: this.addChallenge,
             callbackScope: this,
             loop: true
         })
 
-        this.time.delayedCall(10000, () => { // after x seconds elite enemies can spawn
+        this.time.delayedCall(30000, () => { // after 15 seconds elite enemies can spawn
             this.eliteCanSpawn = true
+            console.log('elite can spawn')
+        })
+
+        this.time.delayedCall(90000, () => { // after 60 seconds purple enemies can spawn
+            this.purpleCanSpawn = true
+            //console.log('purple can spawn')
+        })
+
+        this.time.delayedCall(180000, () => { // after 60 seconds purple enemies can spawn
+            this.ratSpawnTimer.remove()
+            this.dFlySpawnTimer.remove()
+            this.gameTimer.remove()
+            this.challengeTimer.remove()
+
+            menuScene.bgMusic.destroy()
+            this.sound.play('winsound')
+        })
+
+        this.time.delayedCall(184000, () => { // after 60 seconds purple enemies can spawn
+            this.bossMusic = this.sound.add('bossmusic', {volume: 1, loop: true})
+            this.bossMusic.play()
+        })
+
+        this.time.delayedCall(193000, () => { // after 180 seconds purple enemies can spawn //193000
+            this.kingCanSpawn = true
+            this.ratKing = new Rat(this, this.ratSpeed, this.ratPos.y, this.laneY, 3).setOrigin(0.5, 1)
+            this.ratKing.anims.play('ratkingrun').setSize(200,180)
+            this.ratGroup.add(this.ratKing)
+            this.ratKing.setDepth(2 + this.laneDepthMod)
+            console.log('king can spawn')
+
+            // spawn enemies every X seconds
+            this.ratSpawnTimer = this.time.addEvent({
+                delay: this.ratSpawnDelay,
+                callback: this.addRat,
+                callbackScope: this,
+                loop: true
+            })
+
+            // spawn dFlys every 5 seconds
+            this.dFlySpawnTimer = this.time.addEvent({
+                delay: this.dFlySpawnDelay,
+                callback: this.addDFly,
+                callbackScope: this,
+                loop: true
+            })
+
+            // ingame timer
+            this.gameTimer = this.time.addEvent({
+                delay: 1000,
+                callback: this.addTime,
+                callbackScope: this,
+                loop: true
+            })
         })
 
         // spawn enemies every X seconds
@@ -316,6 +392,26 @@ class Play extends Phaser.Scene {
             frameRate: 8,
             repeat: -1,
             frames: this.anims.generateFrameNumbers('eliteratrun', {
+                start:0,
+                end: 1
+            })
+        })
+
+        this.anims.create({
+            key: 'purpleratrun',
+            frameRate: 6,
+            repeat: -1,
+            frames: this.anims.generateFrameNumbers('purplerat', {
+                start:0,
+                end: 1
+            })
+        })
+
+        this.anims.create({
+            key: 'ratkingrun',
+            frameRate: 6,
+            repeat: -1,
+            frames: this.anims.generateFrameNumbers('ratking', {
                 start:0,
                 end: 1
             })
@@ -477,8 +573,8 @@ class Play extends Phaser.Scene {
         this.physics.world.collide(this.frog, this.dFlyGroup, this.dFlyCollision, null, this) // dragon fly vs frog
         this.physics.world.collide(this.frogProjectileGroup, this.ratGroup, this.frogProjectileEnemyCollision, null, this) //frog projectile vs enemy
         this.physics.world.collide(this.frogProjectileGroup, this.dFlyGroup, this.attackDFlyCollision, null, this) //frog projectile vs dFly
-        this.physics.world.collide(this.castle, this.ratGroup, this.castleEnemyCollision, null, this) //castle vs rat
-        this.physics.world.collide(this.castle, this.dFlyGroup, this.castleEnemyCollision, null, this) //castle vs dragon fly
+        this.physics.world.collide(this.castleGroup, this.ratGroup, this.castleEnemyCollision, null, this) //castle vs rat
+        this.physics.world.collide(this.castleGroup, this.dFlyGroup, this.castleEnemyCollision, null, this) //castle vs dragon fly
     }
 
     keyDownCode() {
@@ -611,48 +707,75 @@ class Play extends Phaser.Scene {
     }
 
     addRat() {
-
         if(!this.paused){
             this.ratRandom = Phaser.Math.Between(0, 3)
 
             if(this.ratRandom == 0){
-                this.ratPos.y = this.laneOneY - 10
+                this.ratPos.y = this.laneOneY + 20
                 this.laneY = this.ratPos.y
+                this.laneDepthMod = 0
             }
             else if(this.ratRandom == 1) {
-                this.ratPos.y = this.laneTwoY - 10
+                this.ratPos.y = this.laneTwoY + 20
                 this.laneY = this.ratPos.y
+                this.laneDepthMod = 4
             }
             else if(this.ratRandom == 2) {
-                this.ratPos.y = this.laneThreeY - 10
+                this.ratPos.y = this.laneThreeY + 20
                 this.laneY = this.ratPos.y
+                this.laneDepthMod = 8
             }
             else if(this.ratRandom == 3) {
-                this.ratPos.y = this.laneFourY - 10
+                this.ratPos.y = this.laneFourY + 20
                 this.laneY = this.ratPos.y
+                this.laneDepthMod = 12
             }
             
-            if(this.eliteCanSpawn){
-                this.ratEliteRandom = Phaser.Math.Between(0, 3) // 1/4 chance of spawning in an elite rat
-                if(this.ratEliteRandom == 3){
-                    this.elite = true
+            if(this.eliteCanSpawn && !this.purpleCanSpawn){
+                this.ratEliteRandom = Phaser.Math.Between(0, 2) // 1/4 chance of spawning in an elite rat
+                if(this.ratEliteRandom == 2){
+                    this.whichRat = 1
+                }
+                else {
+                    this.whichRat = 0
+                }
+            }
+            else if(this.purpleCanSpawn){
+                console.log('canpurple')
+                this.purpleRandom = Phaser.Math.Between(0, 4) // 1/4 chance of spawning in a purple rat
+                this.ratEliteRandom = Phaser.Math.Between(0, 1) // 1/2 chance of spawning in an elite rat
+                if(this.purpleRandom == 4){
+                    this.whichRat = 2
+                    console.log('purple')
+                }
+                else if(this.ratEliteRandom == 1){
+                    this.whichRat = 1
+                    console.log('elite')
+                }
+                else{
+                    this.whichRat = 0
+                    console.log('base')
                 }
             }
 
-    
-            this.rat = new Rat(this, this.ratSpeed, this.ratPos.y, this.laneY, this.elite).setScale(0.5)
+            this.rat = new Rat(this, this.ratSpeed, this.ratPos.y, this.laneY, this.whichRat).setScale(0.5).setOrigin(0.5, 1)
     
             this.ratGroup.add(this.rat)
     
-            if(!this.elite){
+            if(this.whichRat == 0){
                 this.rat.anims.play('ratrunning')
+                this.rat.setDepth(5 + this.laneDepthMod)
             }
-            else {
-                this.rat.anims.play('eliteratrunning')
+            else if(this.whichRat == 1){
+                this.rat.anims.play('eliteratrunning').setScale(0.6)
+                this.rat.setDepth(4 + this.laneDepthMod)
             }
-            
-    
-            this.elite = false // reset elite rat bool
+            else if(this.whichRat == 2){
+                this.rat.anims.play('purpleratrun').setScale(0.75).setSize(256,128)
+                this.rat.setDepth(3 + this.laneDepthMod)
+            }
+
+            this.whichRat = 0
         }
 
     }
@@ -663,6 +786,9 @@ class Play extends Phaser.Scene {
             this.blocked = true
             this.frog.anims.play('block')
             this.knockBackForce = this.baseKnockBackForce * 3
+            if(rat.isKing){
+                this.knockBackForce = this.baseKnockBackForce * 15
+            }
             this.knockBack(rat)
 
             this.time.delayedCall(150, () => { // wait 1 tenth of a second
@@ -683,23 +809,23 @@ class Play extends Phaser.Scene {
             this.dFlyRandom = Phaser.Math.Between(0, 3)
 
             if(this.dFlyRandom == 0){
-                this.dFlyPos.y = this.laneOneY - 10
+                this.dFlyPos.y = this.laneOneY - 30
                 this.laneY = this.dFlyPos.y
             }
             else if(this.dFlyRandom == 1) {
-                this.dFlyPos.y = this.laneTwoY - 10
+                this.dFlyPos.y = this.laneTwoY - 30
                 this.laneY = this.dFlyPos.y
             }
             else if(this.dFlyRandom == 2) {
-                this.dFlyPos.y = this.laneThreeY - 10
+                this.dFlyPos.y = this.laneThreeY - 30
                 this.laneY = this.dFlyPos.y
             }
             else if(this.dFlyRandom == 3) {
-                this.dFlyPos.y = this.laneFourY - 10
+                this.dFlyPos.y = this.laneFourY - 30
                 this.laneY = this.dFlyPos.y
             }
     
-            this.dFly = new DFly(this, this.dFlySpeed, this.dFlyPos.y, this.laneY).setScale(0.75)
+            this.dFly = new DFly(this, this.dFlySpeed, this.dFlyPos.y, this.laneY).setScale(0.75).setDepth(18)
     
             this.dFlyGroup.add(this.dFly)
         }
@@ -780,16 +906,25 @@ class Play extends Phaser.Scene {
     }
 
     castleEnemyCollision(castle, enemy) {
-        if(this.castleHP > 0) {
-            this.castleHP --
-        }
-        this.castleText.text = this.castleHP
+        if(!enemy.died){ // if enemy hasn't already hit castle to prevent from multi triggers
+            if(this.castleHP > 0) {
+                this.castleHP --
+                if(enemy.isKing){
+                    this.castleHP = 0
+                }
+            }
+            
+            this.castleText.text = this.castleHP
+    
+            enemy.knockBack(true)
+            
+            if(this.castleHP < 1) {
+                this.time.delayedCall(1000, () => { this.scene.start('gameOverScene', this.timer) })
+            }
 
-        enemy.knockBack(true)
-        
-        if(this.castleHP < 1) {
-            this.time.delayedCall(1000, () => { this.scene.start('gameOverScene', this.timer) })
+            this.castleFlash()
         }
+
     }
 
     enemyFlash(enemy) {
@@ -800,14 +935,21 @@ class Play extends Phaser.Scene {
         })
     }
 
+    castleFlash(){
+        this.fakeCastle.setTintFill(0xffffff)
+        this.time.delayedCall(50, () => {
+            this.fakeCastle.clearTint()
+        })
+    }
+
     addChallenge() {
         if(!this.paused){
             // spawn faster
-            if(this.dFLySpawnDelay > 1500){
+            if(this.dFLySpawnDelay > 1300){
                 this.dFlySpawnDelay -= 300
                 this.dFlySpawnTimer.delay = this.dFlySpawnDelay
             }
-            if(this.ratSpawnDelay > 450) {
+            if(this.ratSpawnDelay > 400) {
                 this.ratSpawnDelay -= 125
                 this.ratSpawnTimer.delay = this.ratSpawnDelay
             }
@@ -826,7 +968,6 @@ class Play extends Phaser.Scene {
         if(!enemy.knockedBack){
             enemy.knockedBack = true
             enemy.setVelocityX(0)
-
             enemy.knockBack(false)
         }
 
@@ -857,7 +998,7 @@ class Play extends Phaser.Scene {
 
     xpCode() {
         if(this.currentXP >= this.xpNeed) {
-            console.log('level up')
+            //console.log('level up')
             this.currentLevel++
             this.levelText.text = 'LVL: ' + this.currentLevel
             this.currentXP = 0
@@ -892,14 +1033,14 @@ class Play extends Phaser.Scene {
         this.physics.pause()
 
         // add text
-        this.upgradeText = this.add.text(game.config.width/2, game.config.height/2 - 200, 'Choose Your Upgrade', skillConfig).setOrigin(0.5)
-        this.skillOneText = this.add.text(game.config.width/2, game.config.height/2 - 100, 'Spit Through Enemies', skillConfig).setOrigin(0.5)
-        this.skillTwoText = this.add.text(game.config.width/2, game.config.height/2, 'Increase Attack Range', skillConfig).setOrigin(0.5)
-        this.skillThreeText = this.add.text(game.config.width/2, game.config.height/2 + 100, 'Dont Choose Me!', skillConfig).setOrigin(0.5)
+        this.upgradeText = this.add.text(game.config.width/2, game.config.height/2 - 200, 'Choose Your Upgrade', skillConfig).setOrigin(0.5).setDepth(19)
+        this.skillOneText = this.add.text(game.config.width/2, game.config.height/2 - 100, 'Spit Through ' + (this.enemiesCanHit + 1) + ' Enemies', skillConfig).setOrigin(0.5).setDepth(19)
+        this.skillTwoText = this.add.text(game.config.width/2, game.config.height/2, 'Increase Attack Range', skillConfig).setOrigin(0.5).setDepth(19)
+        this.skillThreeText = this.add.text(game.config.width/2, game.config.height/2 + 100, 'Increase All Damage', skillConfig).setOrigin(0.5).setDepth(19)
     }
 
     projectileSkill() {
-        console.log('projectile skill')
+        //console.log('projectile skill')
         this.projectileTierOne = true
         this.enemiesCanHit++
     }

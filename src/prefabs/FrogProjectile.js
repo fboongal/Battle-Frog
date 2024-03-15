@@ -17,6 +17,7 @@ class FrogProjectile extends Phaser.Physics.Arcade.Sprite {
 
         if(this.x > game.config.width) {
             this.destroy()
+            this.parentScene.enemiesHit = 0 // resets enemies hit counter
         }
     }
 }

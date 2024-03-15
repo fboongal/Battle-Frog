@@ -45,11 +45,11 @@ class DFly extends Phaser.Physics.Arcade.Sprite {
         else{
             if(this.goUp){
                 this.setVelocityY(100)
-                console.log(this.goUp)
+                //console.log(this.goUp)
             }
             else {
                 this.setVelocityY(-100)
-                console.log(this.goUp)
+                //console.log(this.goUp)
             }
         }
     }
@@ -68,6 +68,9 @@ class DFly extends Phaser.Physics.Arcade.Sprite {
     }
 
     knockBack(castle) {
+        if(castle){
+            this.died = true
+        }
         this.parentScene.tweens.add({
             targets: this,
             x: this.x + this.parentScene.knockBackForce,

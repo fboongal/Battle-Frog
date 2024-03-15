@@ -1,43 +1,59 @@
 class Rat extends Phaser.Physics.Arcade.Sprite {
-    constructor(scene, velocity, spawnY, laneY, elite) {
+    constructor(scene, velocity, spawnY, laneY, whichRat) {
         // call Phaser Physics Sprite constructor
-        super(scene, game.config.width + 100, spawnY, 'ratrun')
+        super(scene, game.config.width + 125, spawnY, 'ratrun')
 
         this.laneY = laneY
 
         this.parentScene = scene
-        if(!elite) {
+
+        this.isKing = false
+
+        if(whichRat == 0) {
             this.hp = 100
+            this.speed = velocity
         }
-        else {
+        else if(whichRat == 1){
             this.hp = 300
-            this.setTexture('eliteratrun')
+            //this.setTexture('eliteratrun')
+            this.speed = velocity
+        }
+        else if(whichRat == 2){
+            this.hp = 800
+            //this.setTexture('purpleratrun')
+            this.speed = velocity + 30
+        }
+
+        else if(whichRat == 3){
+            this.hp = 15000
+            //this.setTexture('purpleratrun')
+            this.speed = velocity - 30
+            this.isKing = true
         }
         
         this.hit = false     
         this.spitHit = false
-
-        this.speed = velocity
         
         this.died = false
 
         // set up physics sprite
         this.parentScene.add.existing(this)    
         this.parentScene.physics.add.existing(this) 
-        this.setVelocityX(velocity) 
+        this.setVelocityX(this.speed) 
         //this.setDragX(5)         
         this.setImmovable()                    
         this.newRat = true
         
         this.eatKnocked = false
         this.goUp = false
+
+        //boss idea! Boss is very fast (maybe gets faster over time) 
+        //but gets knocked back very far in comparison to other rats (maybe you have an ancient shield that protects from strong foes (like Link's Master Sword))
+        //creating a juggle like gameplay
+        //big boss health bar of course
+
     }
-
     update() {
-        if(this.x < 0) {
-            this.destroy()
-        }
-
         //if moved away from lane Y axis, move back lane Y axis
 
         const tolerance = 4
@@ -55,12 +71,16 @@ class Rat extends Phaser.Physics.Arcade.Sprite {
         else{
             if(this.goUp){
                 this.setVelocityY(100)
-                console.log(this.goUp)
+                //console.log(this.goUp)
             }
             else {
                 this.setVelocityY(-100)
-                console.log(this.goUp)
+                //console.log(this.goUp)
             }
+        }
+
+        if(this.x < 0) {
+            this.destroy()
         }
     }
 
@@ -78,6 +98,9 @@ class Rat extends Phaser.Physics.Arcade.Sprite {
     }
 
     knockBack(castle) {
+        if(castle){
+            this.died = true
+        }
         this.parentScene.tweens.add({
             targets: this,
             x: this.x + this.parentScene.knockBackForce,
@@ -90,7 +113,6 @@ class Rat extends Phaser.Physics.Arcade.Sprite {
                     this.alpha = 0
                     this.setVelocityX(0)
                     this.body.checkCollision.none = true
-                    this.died = true
                     if(!castle){
                         this.parentScene.currentXP++
                         this.parentScene.xpText.text = this.parentScene.currentXP + '/' + this.parentScene.xpNeed
