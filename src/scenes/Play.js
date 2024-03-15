@@ -13,7 +13,7 @@ class Play extends Phaser.Scene {
         this.frogBounce = 0.5
         this.frogProjectileSpeed = 500
         this.blocked = false
-        this.atkDmg = 100
+        this.atkDmg = 10000
         this.spitDmg = 100
 
         // hop points
@@ -158,7 +158,7 @@ class Play extends Phaser.Scene {
         this.castleGroup.add(this.castleTwo)
 
         //fake castle for flash fx
-        this.fakeCastle = this.add.sprite(this.game.config.width/2, this.game.config.height/2, 'fakecastle')
+        this.fakeCastle = this.add.sprite(this.game.config.width/2, this.game.config.height/2, 'fakecastle').setDepth(5)
 
         //creation of frog and its properties
         this.frog = this.physics.add.sprite(230, 290, 'frogeat').setOrigin(0.5).setScale(0.5)
@@ -223,17 +223,17 @@ class Play extends Phaser.Scene {
             loop: true
         })
 
-        this.time.delayedCall(30000, () => { // after 15 seconds elite enemies can spawn
+        this.time.delayedCall(3000, () => { // after 15 seconds elite enemies can spawn
             this.eliteCanSpawn = true
             console.log('elite can spawn')
         })
 
-        this.time.delayedCall(90000, () => { // after 60 seconds purple enemies can spawn
+        this.time.delayedCall(9000, () => { // after 60 seconds purple enemies can spawn
             this.purpleCanSpawn = true
             //console.log('purple can spawn')
         })
 
-        this.time.delayedCall(180000, () => { // after 60 seconds purple enemies can spawn
+        this.time.delayedCall(18000, () => { // after 60 seconds purple enemies can spawn
             this.ratSpawnTimer.remove()
             this.dFlySpawnTimer.remove()
             this.gameTimer.remove()
@@ -244,13 +244,13 @@ class Play extends Phaser.Scene {
             this.destroyAll.setPosition(centerX, centerY)
         })
 
-        this.time.delayedCall(184000, () => { // after 60 seconds purple enemies can spawn
+        this.time.delayedCall(18400, () => { // after 60 seconds purple enemies can spawn
             this.destroyAll.setPosition(-3000, -3000)
             this.bossMusic = this.sound.add('bossmusic', {volume: 1, loop: true})
             this.bossMusic.play()
         })
 
-        this.time.delayedCall(193000, () => { // after 180 seconds purple enemies can spawn //193000
+        this.time.delayedCall(19300, () => { // after 180 seconds purple enemies can spawn //193000
             this.kingCanSpawn = true
             this.ratKing = new Rat(this, this.ratSpeed, this.ratPos.y, this.laneY, 3).setOrigin(0.5, 1)
             this.ratKing.anims.play('ratkingrun').setSize(200,180)
@@ -468,6 +468,8 @@ class Play extends Phaser.Scene {
         this.rainLoop.play()
         this.rain = this.add.tileSprite(0, 0, 960, 600,
             'rain').setOrigin(0,0)
+
+
     }
 
     update() {
@@ -1138,6 +1140,9 @@ class Play extends Phaser.Scene {
 
     credits(){
         //credits stuff
+        let devCredits = this.add.bitmapText(1100, centerY, 'BC', 'Developed by Alex Beteta & Franchesca Boongaling').setScale(1.25).setDepth(4)
+        this.physics.add.existing(devCredits)
+        devCredits.body.setVelocityX(-200)
     }
 }
 

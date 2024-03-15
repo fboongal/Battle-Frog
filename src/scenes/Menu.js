@@ -33,7 +33,13 @@ class Menu extends Phaser.Scene {
         this.load.image('7HP', '/img/HP/7.png') 
         this.load.image('8HP', '/img/HP/8.png') 
         this.load.image('9HP', '/img/HP/9.png') 
-        this.load.image('10HP', '/img/HP/10.png') 
+        this.load.image('10HP', '/img/HP/10.png')
+        
+        // load upgrade UI
+        this.load.image('upgradeUI', '/img/Upgrade_UI.png')
+        this.load.image('lUpgUI', '/img/LeftUPGUI.png')
+        this.load.image('mUpgUI', '/img/MidUPGUI.png')
+        this.load.image('rUpgUI', '/img/RightUPGUI.png')
 
         // load bitmap font
         this.load.bitmapFont('BC', 'font/BC.png', 'font/BC.xml') // found from https://www.dafont.com/black-castle.font by Richard William Mueller
