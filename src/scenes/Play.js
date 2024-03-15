@@ -126,7 +126,10 @@ class Play extends Phaser.Scene {
         keyDOWN = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S)
         keySPACE = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE)
 
-        this.bgSprite = this.add.sprite(game.config.width/2, game.config.height/2, 'bg')
+        // background and foreground
+        this.add.sprite(centerX, centerY, 'bg')
+        this.add.sprite(centerX, centerY, 'fg').setDepth(30)
+
 
         // lilypad sprite
         this.lilyPad = this.add.sprite(245, this.laneOneY, 'lilypad').setScale(0.65)
@@ -450,6 +453,8 @@ class Play extends Phaser.Scene {
         this.rainLoop.play()
         this.rain = this.add.tileSprite(0, 0, 960, 600,
             'rain').setOrigin(0,0)
+
+            this.add.rectangle(100, 50, 100, 25, 0xff000)
     }
 
     update() {
