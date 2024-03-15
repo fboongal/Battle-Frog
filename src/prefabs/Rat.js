@@ -11,6 +11,8 @@ class Rat extends Phaser.Physics.Arcade.Sprite {
 
         this.ratSpeedOffset = Phaser.Math.Between(-15, 15)
 
+        this.isGettingDestroyed = false
+
         if(whichRat == 0) {
             this.hp = 100
             this.speed = velocity + this.ratSpeedOffset
@@ -48,6 +50,8 @@ class Rat extends Phaser.Physics.Arcade.Sprite {
         
         this.eatKnocked = false
         this.goUp = false
+
+        this.gameOver = false
 
         //boss idea! Boss is very fast (maybe gets faster over time) 
         //but gets knocked back very far in comparison to other rats (maybe you have an ancient shield that protects from strong foes (like Link's Master Sword))
@@ -100,37 +104,51 @@ class Rat extends Phaser.Physics.Arcade.Sprite {
     }
 
     knockBack(castle) {
-        if(castle){
-            this.died = true
-        }
-        this.parentScene.tweens.add({
-            targets: this,
-            x: this.x + this.parentScene.knockBackForce,
-            ease: 'Linear',
-            duration: 75,
-            onComplete: () => {
-                this.knockedBack = false
-                if(this.hp < 1 || castle){ //if enemy has no health left or has collided with the castle
-                    //change  instead of destroy
-                    this.alpha = 0
-                    this.setVelocityX(0)
-                    this.body.checkCollision.none = true
-                    if(!castle){
-                        this.parentScene.currentXP++
-                        this.parentScene.xpText.text = this.parentScene.currentXP + '/' + this.parentScene.xpNeed
-                    }
-
-
-                    this.parentScene.time.delayedCall(2000, () => { 
-                        this.destroy()
-                    })
-                }
-                
-                else if(this.hp > 0){ // if enemy is still alive
-                    this.setVelocityX(this.speed)
-                }
-                this.parentScene.knockBackForce = this.parentScene.baseKnockBackForce
+        if(!this.gameOver){
+            if(castle){
+                this.died = true
             }
-        })
+            this.parentScene.tweens.add({
+                targets: this,
+                x: this.x + this.parentScene.knockBackForce,
+                ease: 'Linear',
+                duration: 75,
+                onComplete: () => {
+                    this.knockedBack = false
+                    if(this.hp < 1 || castle){ //if enemy has no health left or has collided with the castle
+                        //change  instead of destroy
+    
+                        if(!castle){
+                            this.parentScene.currentXP++
+                            this.parentScene.xpText.text = this.parentScene.currentXP + '/' + this.parentScene.xpNeed
+                        }
+    
+                        if(!this.isKing){
+                            this.alpha = 0
+                            this.setVelocityX(0)
+                            this.body.checkCollision.none = true
+                            this.parentScene.time.delayedCall(2000, () => { 
+                                this.destroy()
+                            })
+                        }
+    
+    
+                        if(this.isKing){
+                            this.setVelocityX(0)
+                            this.gameOver = true
+                            this.parentScene.destroyAll.setPosition(centerX, centerY)
+                            this.parentScene.theKingHasFallen()
+                            
+                        }
+                    }
+                    
+                    else if(this.hp > 0){ // if enemy is still alive
+                        this.setVelocityX(this.speed)
+                    }
+                    this.parentScene.knockBackForce = this.parentScene.baseKnockBackForce
+                }
+            })
+        }
+
     }
 }

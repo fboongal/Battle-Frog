@@ -13,7 +13,7 @@ class Play extends Phaser.Scene {
         this.frogBounce = 0.5
         this.frogProjectileSpeed = 500
         this.blocked = false
-        this.atkDmg = 100
+        this.atkDmg = 10000
         this.spitDmg = 100
 
         // hop points
@@ -127,10 +127,10 @@ class Play extends Phaser.Scene {
         keyDOWN = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S)
         keySPACE = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE)
 
+        //this.add.bitmapText(centerX, 500, 'TH', 'Press (W) and (S) to Hop').setScale(0.75).setDepth(40).setOrigin(0.5)
+        //this.add.bitmapText(centerX, 500, 'TH', 'Press (D) to Attack').setScale(0.75).setDepth(40).setOrigin(0.5)
     
         this.castleHpBar = this.add.sprite(centerX, centerY, this.castleBars[10]).setDepth(1)
-
-        
 
         // background and foreground
         this.add.sprite(centerX, centerY, 'bg')
@@ -208,6 +208,13 @@ class Play extends Phaser.Scene {
          this.physics.add.overlap(this.eat, this.dFlyGroup, this.eatDFlyCollision, null, this)
          this.physics.add.overlap(this.eat, this.ratGroup, this.eatRatCollision, null, this)
 
+         //create destroy all sprite
+         this.destroyAll = this.physics.add.sprite(-3000, 3000).setOrigin(0.5)
+         this.destroyAll.setSize(1200, 600)
+
+         this.physics.add.overlap(this.destroyAll, this.ratGroup, this.destroyEnemies, null, this)
+         this.physics.add.overlap(this.destroyAll, this.dFlyGroup, this.destroyEnemies, null, this)
+
         // challenge timer that increases spawn rate of enemies and dFlys
         this.challengeTimer = this.time.addEvent({
             delay: 7500,
@@ -216,17 +223,17 @@ class Play extends Phaser.Scene {
             loop: true
         })
 
-        this.time.delayedCall(30000, () => { // after 15 seconds elite enemies can spawn
+        this.time.delayedCall(3000, () => { // after 15 seconds elite enemies can spawn
             this.eliteCanSpawn = true
             console.log('elite can spawn')
         })
 
-        this.time.delayedCall(90000, () => { // after 60 seconds purple enemies can spawn
+        this.time.delayedCall(9000, () => { // after 60 seconds purple enemies can spawn
             this.purpleCanSpawn = true
             //console.log('purple can spawn')
         })
 
-        this.time.delayedCall(180000, () => { // after 60 seconds purple enemies can spawn
+        this.time.delayedCall(18000, () => { // after 60 seconds purple enemies can spawn
             this.ratSpawnTimer.remove()
             this.dFlySpawnTimer.remove()
             this.gameTimer.remove()
@@ -234,14 +241,16 @@ class Play extends Phaser.Scene {
 
             menuScene.bgMusic.destroy()
             this.sound.play('winsound')
+            this.destroyAll.setPosition(centerX, centerY)
         })
 
-        this.time.delayedCall(184000, () => { // after 60 seconds purple enemies can spawn
+        this.time.delayedCall(18400, () => { // after 60 seconds purple enemies can spawn
+            this.destroyAll.setPosition(-3000, -3000)
             this.bossMusic = this.sound.add('bossmusic', {volume: 1, loop: true})
             this.bossMusic.play()
         })
 
-        this.time.delayedCall(193000, () => { // after 180 seconds purple enemies can spawn //193000
+        this.time.delayedCall(19300, () => { // after 180 seconds purple enemies can spawn //193000
             this.kingCanSpawn = true
             this.ratKing = new Rat(this, this.ratSpeed, this.ratPos.y, this.laneY, 3).setOrigin(0.5, 1)
             this.ratKing.anims.play('ratkingrun').setSize(200,180)
@@ -312,7 +321,7 @@ class Play extends Phaser.Scene {
         }
 
         this.timerText = this.add.text(game.config.width/2, 0, this.timer, timeConfig).setOrigin(0.5, 0)
-        this.castleText = this.add.text(100, 0, this.castleHP, timeConfig).setOrigin(0.5, 0)
+        //this.castleText = this.add.text(100, 0, this.castleHP, timeConfig).setOrigin(0.5, 0)
         this.levelText = this.add.text(860, 0, 'LVL: ' + this.currentLevel, timeConfig).setOrigin(0.5, 0)
         this.xpText = this.add.text(860, 50, this.currentXP + '/' + this.xpNeed, timeConfig).setOrigin(0.5, 0)
 
@@ -924,7 +933,7 @@ class Play extends Phaser.Scene {
                 }
             }
             
-            this.castleText.text = this.castleHP
+            //this.castleText.text = this.castleHP
     
             enemy.knockBack(true)
             
@@ -939,8 +948,10 @@ class Play extends Phaser.Scene {
 
     enemyFlash(enemy) {
         enemy.setTintFill(0xffffff)
-        this.knockBack(enemy)
-        this.time.delayedCall(100, () => {
+        if(!enemy.isGettingDestroyed){
+            this.knockBack(enemy)
+        }
+        this.time.delayedCall(75, () => {
             enemy.clearTint()
         })
     }
@@ -1064,6 +1075,69 @@ class Play extends Phaser.Scene {
     increaseDamage() {
         this.atkDmg *= 1.5
         this.spitDmg *= 1.5
+    }
+
+    destroyEnemies(sprite, enemy) {
+        if(!enemy.isKing){
+            enemy.isGettingDestroyed = true
+            this.enemyFlash(enemy)
+            enemy.knockBack(true)
+            console.log('kill them all')
+        }
+
+    }
+
+    theKingHasFallen(ratking){
+
+        console.log('the king has fallen')
+        this.ratSpawnTimer.remove()
+        this.dFlySpawnTimer.remove()
+        this.gameTimer.remove()
+        this.challengeTimer.remove()
+
+
+        this.bossMusic.destroy()
+
+        this.ratKing.anims.msPerFrame = 90
+
+        // ingame timer
+        this.ratFlashTimer = this.time.addEvent({
+            delay: 400,
+            callback: this.ratFlash,
+            callbackScope: this,
+            repeat: 3,
+            
+        })
+
+        this.time.delayedCall(3200, () => {
+            this.ratKing.setTintFill(0xffffff)
+            this.time.delayedCall(75, () => {
+                this.sound.play('hitsound', {volume: 0.5})
+                this.ratKing.destroy()
+                this.bgMusic = this.sound.add('music', {volume: 1, loop: true})
+                this.bgMusic.play()
+
+                this.credits()
+            })
+
+
+        })
+    }
+
+    ratFlash(){
+        console.log('hi')
+        this.ratKing.setTintFill(0xffffff)
+        this.time.delayedCall(75, () => {
+            this.ratKing.clearTint()
+        })
+
+        this.sound.play('hitsound', {volume: 0.5})
+
+        this.destroyAll.setPosition(-3000, -3000)
+    }
+
+    credits(){
+        //credits stuff
     }
 }
 
