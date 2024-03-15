@@ -13,7 +13,7 @@ class Play extends Phaser.Scene {
         this.frogBounce = 0.5
         this.frogProjectileSpeed = 500
         this.blocked = false
-        this.atkDmg = 10000
+        this.atkDmg = 100
         this.spitDmg = 100
 
         // hop points
@@ -223,17 +223,17 @@ class Play extends Phaser.Scene {
             loop: true
         })
 
-        this.time.delayedCall(3000, () => { // after 15 seconds elite enemies can spawn
+        this.time.delayedCall(30000, () => { // after 15 seconds elite enemies can spawn
             this.eliteCanSpawn = true
             console.log('elite can spawn')
         })
 
-        this.time.delayedCall(9000, () => { // after 60 seconds purple enemies can spawn
+        this.time.delayedCall(90000, () => { // after 60 seconds purple enemies can spawn
             this.purpleCanSpawn = true
             //console.log('purple can spawn')
         })
 
-        this.time.delayedCall(18000, () => { // after 60 seconds purple enemies can spawn
+        this.time.delayedCall(180000, () => { // after 60 seconds purple enemies can spawn
             this.ratSpawnTimer.remove()
             this.dFlySpawnTimer.remove()
             this.gameTimer.remove()
@@ -244,13 +244,13 @@ class Play extends Phaser.Scene {
             this.destroyAll.setPosition(centerX, centerY)
         })
 
-        this.time.delayedCall(18400, () => { // after 60 seconds purple enemies can spawn
+        this.time.delayedCall(184000, () => { // after 60 seconds purple enemies can spawn
             this.destroyAll.setPosition(-3000, -3000)
             this.bossMusic = this.sound.add('bossmusic', {volume: 1, loop: true})
             this.bossMusic.play()
         })
 
-        this.time.delayedCall(19300, () => { // after 180 seconds purple enemies can spawn //193000
+        this.time.delayedCall(193000, () => { // after 180 seconds purple enemies can spawn //193000
             this.kingCanSpawn = true
             this.ratKing = new Rat(this, this.ratSpeed, this.ratPos.y, this.laneY, 3).setOrigin(0.5, 1)
             this.ratKing.anims.play('ratkingrun').setSize(200,180)
