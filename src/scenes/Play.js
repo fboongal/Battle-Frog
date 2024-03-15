@@ -79,6 +79,7 @@ class Play extends Phaser.Scene {
 
         // castle
         this.castleHP = 10
+        this.castleBars = ['0HP','1HP','2HP','3HP','4HP','5HP','6HP','7HP','8HP','9HP','10HP']
 
         //knock back variable
         this.baseKnockBackForce = 25
@@ -125,6 +126,11 @@ class Play extends Phaser.Scene {
         keyUP = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W)
         keyDOWN = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S)
         keySPACE = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE)
+
+    
+        this.castleHpBar = this.add.sprite(centerX, centerY, this.castleBars[10]).setDepth(1)
+
+        
 
         // background and foreground
         this.add.sprite(centerX, centerY, 'bg')
@@ -453,8 +459,6 @@ class Play extends Phaser.Scene {
         this.rainLoop.play()
         this.rain = this.add.tileSprite(0, 0, 960, 600,
             'rain').setOrigin(0,0)
-
-            this.add.rectangle(100, 50, 100, 25, 0xff000)
     }
 
     update() {
@@ -914,6 +918,7 @@ class Play extends Phaser.Scene {
         if(!enemy.died){ // if enemy hasn't already hit castle to prevent from multi triggers
             if(this.castleHP > 0) {
                 this.castleHP --
+                this.castleHpBar = this.add.sprite(centerX, centerY, this.castleBars[this.castleHP]).setDepth(1)
                 if(enemy.isKing){
                     this.castleHP = 0
                 }

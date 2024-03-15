@@ -80,7 +80,9 @@ class DFly extends Phaser.Physics.Arcade.Sprite {
                 this.knockedBack = false
                 if(this.hp < 1 || castle){
                     this.destroy()
-                    this.parentScene.currentXP++
+                    if(!castle){
+                        this.parentScene.currentXP++
+                    }
                     this.parentScene.xpText.text = this.parentScene.currentXP + '/' + this.parentScene.xpNeed
                 }
                 else {

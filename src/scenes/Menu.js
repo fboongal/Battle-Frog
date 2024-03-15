@@ -22,6 +22,19 @@ class Menu extends Phaser.Scene {
         this.load.image('fakecastle', '/img/Castle.png')
         this.load.image('guide', '/img/Guide.png')
 
+        // load HP UI        
+        this.load.image('0HP', '/img/HP/test.png') 
+        this.load.image('1HP', '/img/HP/1.png') 
+        this.load.image('2HP', '/img/HP/2.png') 
+        this.load.image('3HP', '/img/HP/3.png') 
+        this.load.image('4HP', '/img/HP/4.png') 
+        this.load.image('5HP', '/img/HP/5.png') 
+        this.load.image('6HP', '/img/HP/6.png') 
+        this.load.image('7HP', '/img/HP/7.png') 
+        this.load.image('8HP', '/img/HP/8.png') 
+        this.load.image('9HP', '/img/HP/9.png') 
+        this.load.image('10HP', '/img/HP/10.png') 
+
         // load bitmap font
         this.load.bitmapFont('BC', 'font/BC.png', 'font/BC.xml')
         this.load.bitmapFont('TH', 'font/TH.png', 'font/TH.xml')
