@@ -20,6 +20,7 @@ class Menu extends Phaser.Scene {
         this.load.image('hbutton', '/img/highlighted button.png')
         this.load.image('title', '/img/title.png')
         this.load.image('fakecastle', '/img/Castle.png')
+        this.load.image('guide', '/img/Guide.png')
 
         // load bitmap font
         this.load.bitmapFont('BC', 'font/BC.png', 'font/BC.xml')
@@ -60,6 +61,23 @@ class Menu extends Phaser.Scene {
             frameWidth: 240,
             frameHeight: 220
         })
+
+        //guide
+
+        this.load.spritesheet('attack', 'img/FrogAttack.png', {
+            frameWidth: 128,
+            frameHeight: 128
+        })
+
+        this.load.spritesheet('block', 'img/FrogBlock.png', {
+            frameWidth: 128,
+            frameHeight: 128
+        })
+
+        this.load.spritesheet('eat', 'img/FrogGuideEat.png', {
+            frameWidth: 128,
+            frameHeight: 128
+        })
     }
 
     create(){
@@ -96,11 +114,6 @@ class Menu extends Phaser.Scene {
     }
 
     update(){
-        if (Phaser.Input.Keyboard.JustDown(cursors.space)) {
-            this.scene.start('playScene', this)
-        }
-
-        
             // highlight text
             if(this.selectionOne){
                 this.begin = this.add.image(centerX, centerY+170, 'hbutton')
@@ -127,7 +140,7 @@ class Menu extends Phaser.Scene {
                 }
     
                 else if(this.selectionTwo){
-                   
+                    this.scene.start('guideScene', this)
                 }
             }
 
