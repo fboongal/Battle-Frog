@@ -554,7 +554,7 @@ class Play extends Phaser.Scene {
                     this.skillThreeUI.setAlpha(1)
                 }
 
-            if(Phaser.Input.Keyboard.JustDown(keyLEFT) && !this.selectionOne){
+            if(Phaser.Input.Keyboard.JustDown(keyUP) && !this.selectionOne){
                 if(this.selectionTwo) {
                     this.selectionTwo = false
                     this.selectionOne = true
@@ -564,7 +564,7 @@ class Play extends Phaser.Scene {
                     this.selectionTwo = true
                 }
             }
-            else if(Phaser.Input.Keyboard.JustDown(keyRIGHT) && !this.selectionThree){
+            else if(Phaser.Input.Keyboard.JustDown(keyDOWN) && !this.selectionThree){
                 if(this.selectionTwo) {
                     this.selectionTwo = false
                     this.selectionThree = true
@@ -596,7 +596,7 @@ class Play extends Phaser.Scene {
                 for(var i = this.upgTextUI.length - 1; i > -1; i--){ // for each element in this array, while i is greater than -1, subtract 1 from i (alex did this part)
                     
                     this.upgTextUI[i].destroy()
-                }
+                } 
 
                 this.paused = false
                 this.physics.resume()
@@ -1074,12 +1074,22 @@ class Play extends Phaser.Scene {
 
         //add UI
         //this.add.rectangle(centerX, centerY, 550, 400, 0x00000).setDepth(21)
-        this.upgradeUI = this.add.image(centerX, centerY, 'upgradeUI').setOrigin(0.5).setDepth(19).setScale(1.6)
-        this.skillOneUI = this.add.image(centerX, centerY, 'lUpgUI').setOrigin(0.5).setDepth(19).setScale(1.6)
-        this.skillTwoUI = this.add.image(centerX, centerY, 'mUpgUI').setOrigin(0.5).setDepth(19).setScale(1.6)
-        this.skillThreeUI = this.add.image(centerX, centerY, 'rUpgUI').setOrigin(0.5).setDepth(19).setScale(1.6)
+        this.upgradeUI = this.add.image(centerX, centerY, 'upgradeUI').setOrigin(0.5).setDepth(19).setScale(1)
+        this.skillOneUI = this.add.image(centerX, centerY, 'tSelect').setOrigin(0.5).setDepth(19)
+        //this.add.image(centerX, centerY, 'lUpgUI').setOrigin(0.5).setDepth(19).setScale(1.6)
+        
+        this.skillTwoUI = this.add.image(centerX, centerY, 'mSelect').setOrigin(0.5).setDepth(19)
+        //this.add.image(centerX, centerY, 'mUpgUI').setOrigin(0.5).setDepth(19).setScale(1.6)
+        
+        this.skillThreeUI = this.add.image(centerX, centerY, 'bSelect').setOrigin(0.5).setDepth(19)
+        //this.add.image(centerX, centerY, 'rUpgUI').setOrigin(0.5).setDepth(19).setScale(1.6)
         
         this.upgTextUI = [
+            this.add.bitmapText(centerX, 285, 'TH', 'Increase Attack Range').setDepth(20).setScale(0.5).setOrigin(0.5),
+            this.add.bitmapText(centerX, 358, 'TH', 'Pierce Enemies').setDepth(20).setScale(0.5).setOrigin(0.5),
+            this.add.bitmapText(centerX, 435, 'TH', 'Increase All Damage').setDepth(20).setScale(0.5).setOrigin(0.5)
+        ]
+        /*this.upgTextUI = [
         // choose your upgrade text
         this.add.bitmapText(centerX, 182, 'TH', 'Choose Your Power Up!').setOrigin(0.5).setDepth(20).setScale(0.70),
         // attack range text
@@ -1090,7 +1100,7 @@ class Play extends Phaser.Scene {
         this.add.bitmapText(452, 257, 'TH', 'ENEMIES').setDepth(20).setScale(0.55),
         // increase damage text
         this.add.bitmapText(637, 220, 'TH', 'INCREASE').setDepth(20).setScale(0.55),
-        this.add.bitmapText(667, 251, 'TH', 'DAMAGE').setDepth(20).setScale(0.55)]
+        this.add.bitmapText(667, 251, 'TH', 'DAMAGE').setDepth(20).setScale(0.55)] */
 
         console.log(this.upgTextUI[0])
 
