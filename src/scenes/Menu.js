@@ -126,7 +126,9 @@ class Menu extends Phaser.Scene {
 
         // add buttons + text
         this.begin = this.add.image(centerX, centerY+170, 'button')
+        this.beginH = this.add.image(centerX, centerY+170, 'hbutton').setAlpha(0)
         this.guide = this.add.image(centerX-150, centerY+20, 'button').setScale(0.75)
+        this.guideH = this.add.image(centerX-150, centerY+20, 'hbutton').setScale(0.75).setAlpha(0)
         this.add.bitmapText(395, 425, 'TH', 'BEGIN').setScale(1.25).setDepth(1)
         this.add.bitmapText(255, 280, 'TH', 'GUIDE').setScale(1.12).setDepth(1)
 
@@ -139,13 +141,17 @@ class Menu extends Phaser.Scene {
     update(){
             // highlight text
             if(this.selectionOne){
-                this.begin = this.add.image(centerX, centerY+170, 'hbutton')
-                this.guide = this.add.image(centerX-150, centerY+20, 'button').setScale(0.75)
+                this.begin.setAlpha(0)
+                this.beginH.setAlpha(1)
+                this.guide.setAlpha(1)
+                this.guideH.setAlpha(0)
             }
 
             else {
-                this.begin = this.add.image(centerX, centerY+170, 'button')
-                this.guide = this.add.image(centerX-150, centerY+20, 'hbutton').setScale(0.75)
+                this.begin.setAlpha(1) 
+                this.beginH.setAlpha(0)
+                this.guide.setAlpha(0)
+                this.guideH.setAlpha(1)
             }
 
             if(Phaser.Input.Keyboard.JustDown(keyUP) && this.selectionOne){

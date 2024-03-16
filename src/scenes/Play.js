@@ -1073,6 +1073,7 @@ class Play extends Phaser.Scene {
         this.physics.pause()
 
         //add UI
+        //this.add.rectangle(centerX, centerY, 550, 400, 0x00000).setDepth(21)
         this.upgradeUI = this.add.image(centerX, centerY, 'upgradeUI').setOrigin(0.5).setDepth(19).setScale(1.6)
         this.skillOneUI = this.add.image(centerX, centerY, 'lUpgUI').setOrigin(0.5).setDepth(19).setScale(1.6)
         this.skillTwoUI = this.add.image(centerX, centerY, 'mUpgUI').setOrigin(0.5).setDepth(19).setScale(1.6)
