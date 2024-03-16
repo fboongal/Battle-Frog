@@ -21,6 +21,7 @@ class Menu extends Phaser.Scene {
         this.load.image('title', '/img/title.png')
         this.load.image('fakecastle', '/img/Castle.png')
         this.load.image('guide', '/img/Guide.png')
+        this.load.image('night', '/img/NightAlpha.png')
 
         // load HP UI        
         this.load.image('0HP', '/img/HP/test.png') 
@@ -34,6 +35,7 @@ class Menu extends Phaser.Scene {
         this.load.image('8HP', '/img/HP/8.png') 
         this.load.image('9HP', '/img/HP/9.png') 
         this.load.image('10HP', '/img/HP/10.png')
+
         
         // load upgrade UI
         this.load.image('upgradeUI', '/img/Upgrade_UI.png')
@@ -52,7 +54,7 @@ class Menu extends Phaser.Scene {
 
         //this.load.audio('music', '/sounds/BattleFrogsTheme.wav')
         this.load.audio('music', '/sounds/FrogThemeDrums.wav')
-        this.load.audio('bossmusic', '/sounds/BossTheme.wav')
+        this.load.audio('bossmusic', '/sounds/BossMusic2.wav')
         this.load.audio('hopsound', '/sounds/hopsound.wav')
         this.load.audio('swingsound', '/sounds/swing.wav')
         this.load.audio('hitsound', '/sounds/hit.wav')
@@ -60,7 +62,9 @@ class Menu extends Phaser.Scene {
         this.load.audio('spitsound', '/sounds/spit.wav')
         this.load.audio('rainloop', '/sounds/rainloop.wav')
         this.load.audio('winsound', '/sounds/WinSound.wav')
-        this.load.audio('screech', '/sounds/RAT_SCREECH.wav')
+        this.load.audio('screech', '/sounds/ratscreech.wav')
+        this.load.audio('thunder', '/sounds/Thunder.wav')
+        this.load.audio('ambi', '/sounds/ambience.wav')
 
         this.load.spritesheet('frogeat', 'img/FrogSheet.png', {
             frameWidth: 128,

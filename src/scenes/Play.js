@@ -13,7 +13,7 @@ class Play extends Phaser.Scene {
         this.frogBounce = 0.5
         this.frogProjectileSpeed = 500
         this.blocked = false
-        this.atkDmg = 10000
+        this.atkDmg = 100
         this.spitDmg = 100
 
         // hop points
@@ -91,7 +91,7 @@ class Play extends Phaser.Scene {
 
         // xp
         this.currentXP = 0
-        this.xpNeed = 1
+        this.xpNeed = 10
 
         //levels
         this.currentLevel = 1
@@ -121,6 +121,10 @@ class Play extends Phaser.Scene {
     }
 
     create(menuScene){
+        //ambient sound
+        this.ambiSounds = this.sound.add('ambi', {volume: 0.3, loop: true})
+        this.ambiSounds.play()
+
         // set up cursor keys
         cursors = this.input.keyboard.createCursorKeys()
         
@@ -137,8 +141,9 @@ class Play extends Phaser.Scene {
         this.castleHpBar = this.add.sprite(centerX, centerY, this.castleBars[10]).setDepth(1)
 
         // background and foreground
-        this.add.sprite(centerX, centerY, 'bg')
+        this.bgImage = this.add.sprite(centerX, centerY, 'bg')
         this.add.sprite(centerX, centerY, 'fg').setDepth(20)
+        this.night = this.add.sprite(centerX, centerY, 'night').setAlpha(0)
 
 
         // lilypad sprite
@@ -252,11 +257,15 @@ class Play extends Phaser.Scene {
 
             this.time.delayedCall(184000, () => { // after 60 seconds purple enemies can spawn
                 this.destroyAll.setPosition(-3000, -3000)
-                this.bossMusic = this.sound.add('bossmusic', {volume: 1, loop: true})
-                this.bossMusic.play()
+                //where boss music used to start
+                this.time.delayedCall(4000, () => {
+                    this.bossMusic = this.sound.add('bossmusic', {volume: 1, loop: true})
+                    this.bossMusic.play()
+                })
+                this.ThunderWhiteOut()
             })
 
-            this.time.delayedCall(193000, () => { // after 180 seconds purple enemies can spawn //193000
+            this.time.delayedCall(190000, () => { // after 180 seconds purple enemies can spawn //193000
                 this.kingCanSpawn = true
                 this.ratKing = new Rat(this, this.ratSpeed, this.ratPos.y, this.laneY, 3).setOrigin(0.5, 1)
                 this.ratKing.anims.play('ratkingrun').setSize(200,160)
@@ -319,6 +328,7 @@ class Play extends Phaser.Scene {
         }
 
         // in game play UI (timer, level, & xp)
+        this.xpNeed = Math.floor(this.xpNeed)
         this.timerText = this.add.bitmapText(centerX, 0, 'wTH', this.timer).setOrigin(0.5, 0).setScale(0.7)
         this.levelText = this.add.bitmapText(860, 0, 'wTH', 'LVL: ' + this.currentLevel).setOrigin(0.5, 0).setScale(0.7)
         this.xpText = this.add.bitmapText(860, 50, 'wTH', this.currentXP + '/' + this.xpNeed).setOrigin(0.5, 0).setScale(0.7)
@@ -461,11 +471,8 @@ class Play extends Phaser.Scene {
         }, this)
 
         // rain sound + tilesprite
-        this.rainLoop = this.sound.add('rainloop', {volume: 0.25})
-        this.rainLoop.loop = true
-        this.rainLoop.play()
         this.rain = this.add.tileSprite(0, 0, 960, 600,
-            'rain').setOrigin(0,0).setDepth(18)
+        'rain').setOrigin(0,0).setDepth(18).setAlpha(0)
 
 
     }
@@ -476,12 +483,16 @@ class Play extends Phaser.Scene {
         }
 
         if(!this.paused){
-            // rain
+
+            //make rain fall
             this.rain.tilePositionY -= 7
 
             // new hop input
             if(Phaser.Input.Keyboard.JustDown(cursors.down) || Phaser.Input.Keyboard.JustDown(keyDOWN)) {
                 this.keyDownCode()
+
+                //temp
+                //this.ThunderWhiteOut()
             }
 
             else if(Phaser.Input.Keyboard.JustDown(cursors.up) || Phaser.Input.Keyboard.JustDown(keyUP)) {
@@ -1105,7 +1116,7 @@ class Play extends Phaser.Scene {
         })
 
         this.time.delayedCall(2000, () => {
-            this.sound.play('screech')
+            this.sound.play('screech', {volume: 0.5})
         })
 
         this.time.delayedCall(4500, () => {
@@ -1113,7 +1124,10 @@ class Play extends Phaser.Scene {
             this.time.delayedCall(75, () => {
                 this.sound.play('hitsound', {volume: 0.5})
                 this.ratKing.destroy()
-                this.sound.play('winsound')
+                
+                this.time.delayedCall(1000, () => {
+                    this.sound.play('winsound')
+                })
 
                 this.time.delayedCall(4000, () => {
                     this.bgMusic = this.sound.add('music', {volume: 1, loop: true})
@@ -1134,7 +1148,7 @@ class Play extends Phaser.Scene {
             this.ratKing.clearTint()
         })
 
-        this.sound.play('hitsound', {volume: 0.5})
+        this.sound.play('hitsound', {volume: 0.4})
 
         this.destroyAll.setPosition(-3000, -3000)
     }
@@ -1158,6 +1172,54 @@ class Play extends Phaser.Scene {
             this.gameEnd = true
         })
 
+    }
+
+    ThunderWhiteOut(){
+        this.sound.play('thunder')
+        this.whiteOut = this.add.sprite(centerX, centerY, 'bg').setDepth(80).setAlpha(0)
+        this.whiteOut.setSize(960, 600)
+        this.whiteOut.setTintFill(0xffffff)
+        this.whiteOut.setAlpha(1)
+        
+        this.time.delayedCall(75, () => {
+
+            this.whiteOut.setAlpha(0)
+        })
+
+        this.time.delayedCall(150, () => {
+            this.whiteOut.setTintFill(0xffffff)
+            this.whiteOut.setAlpha(1)
+        })
+
+        this.time.delayedCall(225, () => {
+            //this.whiteOut.setTintFill(0xffffff)
+            this.whiteOut.setAlpha(0)
+        })
+
+        this.time.delayedCall(300, () => {
+            //this.whiteOut.setTintFill(0xffffff)
+            this.whiteOut.setAlpha(1)
+        })
+
+        this.time.delayedCall(500, () => {
+            //this.whiteOut.setTintFill(0xffffff)
+            this.rainLoop = this.sound.add('rainloop', {volume: 0.25})
+            this.rainLoop.loop = true
+            this.rainLoop.play()
+            this.rain.setAlpha(1)
+            this.night.setAlpha(0.15).setDepth(50)
+            this.tweens.addCounter({
+                from: 1,
+                to: 0,
+                duration: 2000,
+                onUpdate: tween =>
+                {
+                    const value = tween.getValue()
+                    this.whiteOut.setAlpha(value)
+                }
+            })
+            this.whiteOut.setAlpha(0)
+        })
     }
 }
 
