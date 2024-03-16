@@ -227,17 +227,17 @@ class Play extends Phaser.Scene {
             loop: true
         })
 
-        this.time.delayedCall(30000, () => { // after 15 seconds elite enemies can spawn
+        this.time.delayedCall(3000, () => { // after 15 seconds elite enemies can spawn
             this.eliteCanSpawn = true
             console.log('elite can spawn')
         })
 
-        this.time.delayedCall(90000, () => { // after 60 seconds purple enemies can spawn
+        this.time.delayedCall(9000, () => { // after 60 seconds purple enemies can spawn
             this.purpleCanSpawn = true
             //console.log('purple can spawn')
         })
 
-        this.time.delayedCall(180000, () => { // after 60 seconds purple enemies can spawn
+        this.time.delayedCall(18000, () => { // after 60 seconds purple enemies can spawn
             this.ratSpawnTimer.remove()
             this.dFlySpawnTimer.remove()
             this.gameTimer.remove()
@@ -248,13 +248,13 @@ class Play extends Phaser.Scene {
             this.destroyAll.setPosition(centerX, centerY)
         })
 
-        this.time.delayedCall(184000, () => { // after 60 seconds purple enemies can spawn
+        this.time.delayedCall(18400, () => { // after 60 seconds purple enemies can spawn
             this.destroyAll.setPosition(-3000, -3000)
             this.bossMusic = this.sound.add('bossmusic', {volume: 1, loop: true})
             this.bossMusic.play()
         })
 
-        this.time.delayedCall(193000, () => { // after 180 seconds purple enemies can spawn //193000
+        this.time.delayedCall(19300, () => { // after 180 seconds purple enemies can spawn //193000
             this.kingCanSpawn = true
             this.ratKing = new Rat(this, this.ratSpeed, this.ratPos.y, this.laneY, 3).setOrigin(0.5, 1)
             this.ratKing.anims.play('ratkingrun').setSize(200,160)
@@ -324,10 +324,10 @@ class Play extends Phaser.Scene {
             fixedWidth: 200
         }
 
-        this.timerText = this.add.text(game.config.width/2, 0, this.timer, timeConfig).setOrigin(0.5, 0)
+        this.timerText = this.add.bitmapText(game.config.width/2, 0, 'wTH', this.timer).setOrigin(0.5, 0).setScale(0.7)
         //this.castleText = this.add.text(100, 0, this.castleHP, timeConfig).setOrigin(0.5, 0)
-        this.levelText = this.add.text(860, 0, 'LVL: ' + this.currentLevel, timeConfig).setOrigin(0.5, 0)
-        this.xpText = this.add.text(860, 50, this.currentXP + '/' + this.xpNeed, timeConfig).setOrigin(0.5, 0)
+        this.levelText = this.add.bitmapText(860, 0, 'wTH', 'LVL: ' + this.currentLevel).setOrigin(0.5, 0).setScale(0.7)
+        this.xpText = this.add.bitmapText(860, 50, 'wTH', this.currentXP + '/' + this.xpNeed).setOrigin(0.5, 0).setScale(0.7)
 
         this.anims.create({
             key: 'eat',
@@ -1152,10 +1152,10 @@ class Play extends Phaser.Scene {
     credits(){
         //credits stuff
         let devCreditsText = 'Developed by Alex Beteta & Franchesca Boongaling          Special Thanks to Nathan Altice, Nate, Ruby, and Ishan          And Thank YOU for Playing!'
-        let devCredits = this.add.bitmapText(1100, centerY, 'TH', devCreditsText).setScale(1.25).setDepth(4).setOrigin(0, 0.5)
+        let devCredits = this.add.bitmapText(1100, centerY, 'wTH', devCreditsText).setScale(1.25).setDepth(4).setOrigin(0, 0.5)
         this.physics.add.existing(devCredits)
         devCredits.body.setVelocityX(-150)
-        let menuText = this.add.bitmapText(1600, centerY, 'TH', 'Press (M) to go to Menu').setScale(1.25).setDepth(4).setOrigin(0.42, 0.5)
+        let menuText = this.add.bitmapText(1600, centerY, 'wTH', 'Press (M) to go to Menu').setScale(1.25).setDepth(4).setOrigin(0.42, 0.5)
 
         this.time.delayedCall(32000, () => {
             this.tweens.add({

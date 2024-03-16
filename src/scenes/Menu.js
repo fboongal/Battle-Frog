@@ -42,8 +42,10 @@ class Menu extends Phaser.Scene {
         this.load.image('rUpgUI', '/img/RightUPGUI.png')
 
         // load bitmap font
-        this.load.bitmapFont('BC', 'font/BC.png', 'font/BC.xml') // found from https://www.dafont.com/black-castle.font by Richard William Mueller
-        this.load.bitmapFont('TH', 'font/TH.png', 'font/TH.xml') // found from https://www.dafont.com/trashhand.font by Luce Avérous
+        this.load.bitmapFont('BC', 'font/BC.png', 'font/BC.xml') // Black Castle found from https://www.dafont.com/black-castle.font by Richard William Mueller
+        this.load.bitmapFont('wBC', 'font/wBC.png', 'font/wBC.xml') // White Black Castle
+        this.load.bitmapFont('TH', 'font/TH.png', 'font/TH.xml') // Trash Hand found from https://www.dafont.com/trashhand.font by Luce Avérous
+        this.load.bitmapFont('wTH', 'font/wTH.png', 'font/wTH.xml') // White Trash Hand
 
         //this.load.audio('music', '/sounds/BattleFrogsTheme.wav')
         this.load.audio('music', '/sounds/FrogThemeDrums.wav')
