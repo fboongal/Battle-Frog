@@ -114,7 +114,10 @@ class Play extends Phaser.Scene {
         this.atkRangeTier = 1
 
         //depth 
-        this.laneDepthMod 
+        this.laneDepthMod
+
+        //game end
+        this.gameEnd = false
     }
 
     create(menuScene){
@@ -126,6 +129,7 @@ class Play extends Phaser.Scene {
         keyUP = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W)
         keyDOWN = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S)
         keySPACE = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE)
+        keyMENU = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.M)
 
         //this.add.bitmapText(centerX, 500, 'TH', 'Press (W) and (S) to Hop').setScale(0.75).setDepth(40).setOrigin(0.5)
         //this.add.bitmapText(centerX, 500, 'TH', 'Press (D) to Attack').setScale(0.75).setDepth(40).setOrigin(0.5)
@@ -223,17 +227,17 @@ class Play extends Phaser.Scene {
             loop: true
         })
 
-        this.time.delayedCall(3000, () => { // after 15 seconds elite enemies can spawn
+        this.time.delayedCall(30000, () => { // after 15 seconds elite enemies can spawn
             this.eliteCanSpawn = true
             console.log('elite can spawn')
         })
 
-        this.time.delayedCall(9000, () => { // after 60 seconds purple enemies can spawn
+        this.time.delayedCall(90000, () => { // after 60 seconds purple enemies can spawn
             this.purpleCanSpawn = true
             //console.log('purple can spawn')
         })
 
-        this.time.delayedCall(18000, () => { // after 60 seconds purple enemies can spawn
+        this.time.delayedCall(180000, () => { // after 60 seconds purple enemies can spawn
             this.ratSpawnTimer.remove()
             this.dFlySpawnTimer.remove()
             this.gameTimer.remove()
@@ -244,16 +248,16 @@ class Play extends Phaser.Scene {
             this.destroyAll.setPosition(centerX, centerY)
         })
 
-        this.time.delayedCall(18400, () => { // after 60 seconds purple enemies can spawn
+        this.time.delayedCall(184000, () => { // after 60 seconds purple enemies can spawn
             this.destroyAll.setPosition(-3000, -3000)
             this.bossMusic = this.sound.add('bossmusic', {volume: 1, loop: true})
             this.bossMusic.play()
         })
 
-        this.time.delayedCall(19300, () => { // after 180 seconds purple enemies can spawn //193000
+        this.time.delayedCall(193000, () => { // after 180 seconds purple enemies can spawn //193000
             this.kingCanSpawn = true
             this.ratKing = new Rat(this, this.ratSpeed, this.ratPos.y, this.laneY, 3).setOrigin(0.5, 1)
-            this.ratKing.anims.play('ratkingrun').setSize(200,180)
+            this.ratKing.anims.play('ratkingrun').setSize(200,160)
             this.ratGroup.add(this.ratKing)
             this.ratKing.setDepth(2 + this.laneDepthMod)
             console.log('king can spawn')
@@ -467,12 +471,16 @@ class Play extends Phaser.Scene {
         this.rainLoop.loop = true
         this.rainLoop.play()
         this.rain = this.add.tileSprite(0, 0, 960, 600,
-            'rain').setOrigin(0,0)
+            'rain').setOrigin(0,0).setDepth(20)
 
 
     }
 
     update() {
+        if(this.gameEnd && Phaser.Input.Keyboard.JustDown(keyMENU)){
+            this.scene.start('menuScene')
+        }
+
         if(!this.paused){
             // rain
             this.rain.tilePositionY -= 7
@@ -1107,8 +1115,7 @@ class Play extends Phaser.Scene {
             delay: 400,
             callback: this.ratFlash,
             callbackScope: this,
-            repeat: 3,
-            
+            repeat: 3
         })
 
         this.time.delayedCall(3200, () => {
@@ -1116,10 +1123,14 @@ class Play extends Phaser.Scene {
             this.time.delayedCall(75, () => {
                 this.sound.play('hitsound', {volume: 0.5})
                 this.ratKing.destroy()
-                this.bgMusic = this.sound.add('music', {volume: 1, loop: true})
-                this.bgMusic.play()
+                this.sound.play('winsound')
 
-                this.credits()
+                this.time.delayedCall(4000, () => {
+                    this.bgMusic = this.sound.add('music', {volume: 1, loop: true})
+                    this.bgMusic.play()
+                    this.credits()
+                })
+                
             })
 
 
@@ -1127,7 +1138,7 @@ class Play extends Phaser.Scene {
     }
 
     ratFlash(){
-        console.log('hi')
+        //console.log('hi')
         this.ratKing.setTintFill(0xffffff)
         this.time.delayedCall(75, () => {
             this.ratKing.clearTint()
@@ -1140,9 +1151,23 @@ class Play extends Phaser.Scene {
 
     credits(){
         //credits stuff
-        let devCredits = this.add.bitmapText(1100, centerY, 'BC', 'Developed by Alex Beteta & Franchesca Boongaling').setScale(1.25).setDepth(4)
+        let devCreditsText = 'Developed by Alex Beteta & Franchesca Boongaling          Special Thanks to Nathan Altice, Nate, Ruby, and Ishan          And Thank YOU for Playing!'
+        let devCredits = this.add.bitmapText(1100, centerY, 'TH', devCreditsText).setScale(1.25).setDepth(4).setOrigin(0, 0.5)
         this.physics.add.existing(devCredits)
-        devCredits.body.setVelocityX(-200)
+        devCredits.body.setVelocityX(-150)
+        let menuText = this.add.bitmapText(1600, centerY, 'TH', 'Press (M) to go to Menu').setScale(1.25).setDepth(4).setOrigin(0.42, 0.5)
+
+        this.time.delayedCall(32000, () => {
+            this.tweens.add({
+                targets: menuText,
+                x: centerX,
+                ease: 'Linear',
+                duration: 8000
+            })
+
+            this.gameEnd = true
+        })
+
     }
 }
 
