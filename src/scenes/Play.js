@@ -1168,7 +1168,7 @@ class Play extends Phaser.Scene {
         devCredits.body.setVelocityX(-150)
         let menuText = this.add.bitmapText(1600, centerY, 'wTH', 'Press (M) to go to Menu').setScale(1.25).setDepth(4).setOrigin(0.42, 0.5)
 
-        this.time.delayedCall(32000, () => {
+        this.time.delayedCall(36000, () => {
             this.tweens.add({
                 targets: menuText,
                 x: centerX,
