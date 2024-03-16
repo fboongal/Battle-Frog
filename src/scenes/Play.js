@@ -219,48 +219,75 @@ class Play extends Phaser.Scene {
          this.physics.add.overlap(this.destroyAll, this.ratGroup, this.destroyEnemies, null, this)
          this.physics.add.overlap(this.destroyAll, this.dFlyGroup, this.destroyEnemies, null, this)
 
-        // challenge timer that increases spawn rate of enemies and dFlys
-        this.challengeTimer = this.time.addEvent({
-            delay: 7500,
-            callback: this.addChallenge,
-            callbackScope: this,
-            loop: true
-        })
+         // if not a tutorial...
+        if(!menuScene.tutorial){
+            // challenge timer that increases spawn rate of enemies and dFlys
+            this.challengeTimer = this.time.addEvent({
+                delay: 7500,
+                callback: this.addChallenge,
+                callbackScope: this,
+                loop: true
+            })
 
-        this.time.delayedCall(3000, () => { // after 15 seconds elite enemies can spawn
-            this.eliteCanSpawn = true
-            console.log('elite can spawn')
-        })
+            this.time.delayedCall(3000, () => { // after 15 seconds elite enemies can spawn
+                this.eliteCanSpawn = true
+                console.log('elite can spawn')
+            })
 
-        this.time.delayedCall(9000, () => { // after 60 seconds purple enemies can spawn
-            this.purpleCanSpawn = true
-            //console.log('purple can spawn')
-        })
+            this.time.delayedCall(9000, () => { // after 60 seconds purple enemies can spawn
+                this.purpleCanSpawn = true
+                //console.log('purple can spawn')
+            })
 
-        this.time.delayedCall(18000, () => { // after 60 seconds purple enemies can spawn
-            this.ratSpawnTimer.remove()
-            this.dFlySpawnTimer.remove()
-            this.gameTimer.remove()
-            this.challengeTimer.remove()
+            this.time.delayedCall(18000, () => { // after 60 seconds purple enemies can spawn
+                this.ratSpawnTimer.remove()
+                this.dFlySpawnTimer.remove()
+                this.gameTimer.remove()
+                this.challengeTimer.remove()
 
-            menuScene.bgMusic.destroy()
-            this.sound.play('winsound')
-            this.destroyAll.setPosition(centerX, centerY)
-        })
+                menuScene.bgMusic.destroy()
+                this.sound.play('winsound')
+                this.destroyAll.setPosition(centerX, centerY)
+            })
 
-        this.time.delayedCall(18400, () => { // after 60 seconds purple enemies can spawn
-            this.destroyAll.setPosition(-3000, -3000)
-            this.bossMusic = this.sound.add('bossmusic', {volume: 1, loop: true})
-            this.bossMusic.play()
-        })
+            this.time.delayedCall(18400, () => { // after 60 seconds purple enemies can spawn
+                this.destroyAll.setPosition(-3000, -3000)
+                this.bossMusic = this.sound.add('bossmusic', {volume: 1, loop: true})
+                this.bossMusic.play()
+            })
 
-        this.time.delayedCall(19300, () => { // after 180 seconds purple enemies can spawn //193000
-            this.kingCanSpawn = true
-            this.ratKing = new Rat(this, this.ratSpeed, this.ratPos.y, this.laneY, 3).setOrigin(0.5, 1)
-            this.ratKing.anims.play('ratkingrun').setSize(200,160)
-            this.ratGroup.add(this.ratKing)
-            this.ratKing.setDepth(2 + this.laneDepthMod)
-            console.log('king can spawn')
+            this.time.delayedCall(19300, () => { // after 180 seconds purple enemies can spawn //193000
+                this.kingCanSpawn = true
+                this.ratKing = new Rat(this, this.ratSpeed, this.ratPos.y, this.laneY, 3).setOrigin(0.5, 1)
+                this.ratKing.anims.play('ratkingrun').setSize(200,160)
+                this.ratGroup.add(this.ratKing)
+                this.ratKing.setDepth(2 + this.laneDepthMod)
+                console.log('king can spawn')
+
+                // spawn enemies every X seconds
+                this.ratSpawnTimer = this.time.addEvent({
+                    delay: this.ratSpawnDelay,
+                    callback: this.addRat,
+                    callbackScope: this,
+                    loop: true
+                })
+
+                // spawn dFlys every 5 seconds
+                this.dFlySpawnTimer = this.time.addEvent({
+                    delay: this.dFlySpawnDelay,
+                    callback: this.addDFly,
+                    callbackScope: this,
+                    loop: true
+                })
+
+                // ingame timer
+                this.gameTimer = this.time.addEvent({
+                    delay: 1000,
+                    callback: this.addTime,
+                    callbackScope: this,
+                    loop: true
+                })
+            })
 
             // spawn enemies every X seconds
             this.ratSpawnTimer = this.time.addEvent({
@@ -285,31 +312,12 @@ class Play extends Phaser.Scene {
                 callbackScope: this,
                 loop: true
             })
-        })
+        }
 
-        // spawn enemies every X seconds
-        this.ratSpawnTimer = this.time.addEvent({
-            delay: this.ratSpawnDelay,
-            callback: this.addRat,
-            callbackScope: this,
-            loop: true
-        })
-
-        // spawn dFlys every 5 seconds
-        this.dFlySpawnTimer = this.time.addEvent({
-            delay: this.dFlySpawnDelay,
-            callback: this.addDFly,
-            callbackScope: this,
-            loop: true
-        })
-
-        // ingame timer
-        this.gameTimer = this.time.addEvent({
-            delay: 1000,
-            callback: this.addTime,
-            callbackScope: this,
-            loop: true
-        })
+        else{
+            console.log('tutorial')
+        }
+        
 
         let timeConfig = {
             frontFamily: 'Courier',
@@ -1105,7 +1113,6 @@ class Play extends Phaser.Scene {
         this.gameTimer.remove()
         this.challengeTimer.remove()
 
-
         this.bossMusic.destroy()
 
         this.ratKing.anims.msPerFrame = 90
@@ -1118,7 +1125,11 @@ class Play extends Phaser.Scene {
             repeat: 3
         })
 
-        this.time.delayedCall(3200, () => {
+        this.time.delayedCall(2000, () => {
+            this.sound.play('screech')
+        })
+
+        this.time.delayedCall(4500, () => {
             this.ratKing.setTintFill(0xffffff)
             this.time.delayedCall(75, () => {
                 this.sound.play('hitsound', {volume: 0.5})

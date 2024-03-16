@@ -57,6 +57,7 @@ class Menu extends Phaser.Scene {
         this.load.audio('spitsound', '/sounds/spit.wav')
         this.load.audio('rainloop', '/sounds/rainloop.wav')
         this.load.audio('winsound', '/sounds/WinSound.wav')
+        this.load.audio('screech', '/sounds/RAT_SCREECH.wav')
 
         this.load.spritesheet('frogeat', 'img/FrogSheet.png', {
             frameWidth: 128,
@@ -132,6 +133,7 @@ class Menu extends Phaser.Scene {
         this.selectionOne = true
         this.selectionTwo = false
 
+        this.tutorial = false
     }
 
     update(){
@@ -161,7 +163,8 @@ class Menu extends Phaser.Scene {
                 }
     
                 else if(this.selectionTwo){
-                    this.scene.start('guideScene', this)
+                    this.tutorial = true
+                    this.scene.start('playScene', this)
                 }
             }
 
