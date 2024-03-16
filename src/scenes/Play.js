@@ -91,7 +91,7 @@ class Play extends Phaser.Scene {
 
         // xp
         this.currentXP = 0
-        this.xpNeed = 10
+        this.xpNeed = 1
 
         //levels
         this.currentLevel = 1
@@ -138,7 +138,7 @@ class Play extends Phaser.Scene {
 
         // background and foreground
         this.add.sprite(centerX, centerY, 'bg')
-        this.add.sprite(centerX, centerY, 'fg').setDepth(30)
+        this.add.sprite(centerX, centerY, 'fg').setDepth(20)
 
 
         // lilypad sprite
@@ -479,7 +479,7 @@ class Play extends Phaser.Scene {
         this.rainLoop.loop = true
         this.rainLoop.play()
         this.rain = this.add.tileSprite(0, 0, 960, 600,
-            'rain').setOrigin(0,0).setDepth(20)
+            'rain').setOrigin(0,0).setDepth(18)
 
 
     }
@@ -535,7 +535,7 @@ class Play extends Phaser.Scene {
 
         else if(this.paused) {
 
-                // highlight UI
+                // Highlight upgrade UI
                 if(this.selectionOne){
                     this.skillThreeUI.setAlpha(0)
                     this.skillTwoUI.setAlpha(0)
@@ -592,6 +592,11 @@ class Play extends Phaser.Scene {
                 this.skillOneUI.destroy()
                 this.skillTwoUI.destroy()
                 this.skillThreeUI.destroy()
+
+                for(var i = this.upgTextUI.length - 1; i > -1; i--){ // for each element in this array, while i is greater than -1, subtract 1 from i (alex did this part)
+                    
+                    this.upgTextUI[i].destroy()
+                }
 
                 this.paused = false
                 this.physics.resume()
@@ -1072,7 +1077,22 @@ class Play extends Phaser.Scene {
         this.skillOneUI = this.add.image(centerX, centerY, 'lUpgUI').setOrigin(0.5).setDepth(19).setScale(1.6)
         this.skillTwoUI = this.add.image(centerX, centerY, 'mUpgUI').setOrigin(0.5).setDepth(19).setScale(1.6)
         this.skillThreeUI = this.add.image(centerX, centerY, 'rUpgUI').setOrigin(0.5).setDepth(19).setScale(1.6)
-    
+        
+        this.upgTextUI = [
+        // choose your upgrade text
+        this.add.bitmapText(centerX, 182, 'TH', 'Choose Your Power Up!').setOrigin(0.5).setDepth(20).setScale(0.70),
+        // attack range text
+        this.add.bitmapText(210, 229, 'TH', 'ATTACK').setDepth(20).setScale(0.55),
+        this.add.bitmapText(240, 260, 'TH', 'RANGE').setDepth(20).setScale(0.55),
+        // piercing text
+        this.add.bitmapText(422, 226, 'TH', 'PIERCE').setDepth(20).setScale(0.55),
+        this.add.bitmapText(452, 257, 'TH', 'ENEMIES').setDepth(20).setScale(0.55),
+        // increase damage text
+        this.add.bitmapText(637, 220, 'TH', 'INCREASE').setDepth(20).setScale(0.55),
+        this.add.bitmapText(667, 251, 'TH', 'DAMAGE').setDepth(20).setScale(0.55)]
+
+        console.log(this.upgTextUI[0])
+
     }
 
     projectileSkill() {
