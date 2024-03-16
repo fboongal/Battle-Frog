@@ -142,10 +142,10 @@ class Play extends Phaser.Scene {
 
 
         // lilypad sprite
-        this.lilyPad = this.add.sprite(245, this.laneOneY, 'lilypad').setScale(0.65)
-        this.lilyPad = this.add.sprite(230, this.laneTwoY, 'lilypad').setScale(0.65)
-        this.lilyPad = this.add.sprite(215, this.laneThreeY, 'lilypad').setScale(0.65)
-        this.lilyPad = this.add.sprite(200, this.laneFourY, 'lilypad').setScale(0.65)
+        this.lilyPad = this.add.sprite(245, this.laneOneY+10, 'lilypad').setScale(0.9)
+        this.lilyPad = this.add.sprite(230, this.laneTwoY+10, 'lilypad').setScale(0.9)
+        this.lilyPad = this.add.sprite(215, this.laneThreeY+10, 'lilypad').setScale(0.9)
+        this.lilyPad = this.add.sprite(200, this.laneFourY+10, 'lilypad').setScale(0.9)
 
         // castle sprite
         this.castle = this.physics.add.sprite(50, game.config.height - 175, 'castle').setScale(0.9)
@@ -1162,7 +1162,7 @@ class Play extends Phaser.Scene {
 
     credits(){
         //credits stuff
-        let devCreditsText = 'Developed by Alex Beteta & Franchesca Boongaling          Special Thanks to Nathan Altice, Nate, Ruby, and Ishan          And Thank YOU for Playing!'
+        let devCreditsText = 'Developed by Alex Beteta & Franchesca Boongaling          Special Thanks to Nathan Altice, Nate Laffan, Ruby Hirsch, and Ishan Gupta         And Thank YOU for Playing!'
         let devCredits = this.add.bitmapText(1100, centerY, 'wTH', devCreditsText).setScale(1.25).setDepth(4).setOrigin(0, 0.5)
         this.physics.add.existing(devCredits)
         devCredits.body.setVelocityX(-150)
