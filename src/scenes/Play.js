@@ -228,18 +228,18 @@ class Play extends Phaser.Scene {
                 callbackScope: this,
                 loop: true
             })
-
-            this.time.delayedCall(3000, () => { // after 15 seconds elite enemies can spawn
+            // dev mode start here
+            this.time.delayedCall(30000, () => { // after 15 seconds elite enemies can spawn
                 this.eliteCanSpawn = true
                 console.log('elite can spawn')
             })
 
-            this.time.delayedCall(9000, () => { // after 60 seconds purple enemies can spawn
+            this.time.delayedCall(90000, () => { // after 60 seconds purple enemies can spawn
                 this.purpleCanSpawn = true
                 //console.log('purple can spawn')
             })
 
-            this.time.delayedCall(18000, () => { // after 60 seconds purple enemies can spawn
+            this.time.delayedCall(180000, () => { // after 60 seconds purple enemies can spawn
                 this.ratSpawnTimer.remove()
                 this.dFlySpawnTimer.remove()
                 this.gameTimer.remove()
@@ -250,13 +250,13 @@ class Play extends Phaser.Scene {
                 this.destroyAll.setPosition(centerX, centerY)
             })
 
-            this.time.delayedCall(18400, () => { // after 60 seconds purple enemies can spawn
+            this.time.delayedCall(184000, () => { // after 60 seconds purple enemies can spawn
                 this.destroyAll.setPosition(-3000, -3000)
                 this.bossMusic = this.sound.add('bossmusic', {volume: 1, loop: true})
                 this.bossMusic.play()
             })
 
-            this.time.delayedCall(19300, () => { // after 180 seconds purple enemies can spawn //193000
+            this.time.delayedCall(193000, () => { // after 180 seconds purple enemies can spawn //193000
                 this.kingCanSpawn = true
                 this.ratKing = new Rat(this, this.ratSpeed, this.ratPos.y, this.laneY, 3).setOrigin(0.5, 1)
                 this.ratKing.anims.play('ratkingrun').setSize(200,160)
@@ -332,7 +332,7 @@ class Play extends Phaser.Scene {
             fixedWidth: 200
         }
 
-        this.timerText = this.add.bitmapText(game.config.width/2, 0, 'wTH', this.timer).setOrigin(0.5, 0).setScale(0.7)
+        this.timerText = this.add.bitmapText(centerX, 0, 'wTH', this.timer).setOrigin(0.5, 0).setScale(0.7)
         //this.castleText = this.add.text(100, 0, this.castleHP, timeConfig).setOrigin(0.5, 0)
         this.levelText = this.add.bitmapText(860, 0, 'wTH', 'LVL: ' + this.currentLevel).setOrigin(0.5, 0).setScale(0.7)
         this.xpText = this.add.bitmapText(860, 50, 'wTH', this.currentXP + '/' + this.xpNeed).setOrigin(0.5, 0).setScale(0.7)
@@ -532,29 +532,29 @@ class Play extends Phaser.Scene {
             this.collisions()// runs collisions
             this.xpCode() // runs xp code
             }
+
         else if(this.paused) {
 
-            // highlight text
-            if(this.selectionOne){
-                this.skillThreeText.setColor('#FFFFFF')
-                this.skillTwoText.setColor('#FFFFFF')
-                this.skillOneText.setColor('#43d637')
-            }
+                // highlight UI
+                if(this.selectionOne){
+                    this.skillThreeUI.setAlpha(0)
+                    this.skillTwoUI.setAlpha(0)
+                    this.skillOneUI.setAlpha(1)
+                }
+    
+                else if(this.selectionTwo){
+                    this.skillOneUI.setAlpha(0)
+                    this.skillThreeUI.setAlpha(0)
+                    this.skillTwoUI.setAlpha(1)
+                }
+    
+                else if(this.selectionThree){
+                    this.skillOneUI.setAlpha(0)
+                    this.skillTwoUI.setAlpha(0)
+                    this.skillThreeUI.setAlpha(1)
+                }
 
-            else if(this.selectionTwo){
-                this.skillOneText.setColor('#FFFFFF')
-                this.skillThreeText.setColor('#FFFFFF')
-                this.skillTwoText.setColor('#43d637')
-            }
-
-            else if(this.selectionThree){
-                this.skillOneText.setColor('#FFFFFF')
-                this.skillTwoText.setColor('#FFFFFF')
-                this.skillThreeText.setColor('#43d637')
-                
-            }
-
-            if(Phaser.Input.Keyboard.JustDown(keyUP) && !this.selectionOne){
+            if(Phaser.Input.Keyboard.JustDown(keyLEFT) && !this.selectionOne){
                 if(this.selectionTwo) {
                     this.selectionTwo = false
                     this.selectionOne = true
@@ -564,7 +564,7 @@ class Play extends Phaser.Scene {
                     this.selectionTwo = true
                 }
             }
-            else if(Phaser.Input.Keyboard.JustDown(keyDOWN) && !this.selectionThree){
+            else if(Phaser.Input.Keyboard.JustDown(keyRIGHT) && !this.selectionThree){
                 if(this.selectionTwo) {
                     this.selectionTwo = false
                     this.selectionThree = true
@@ -577,30 +577,26 @@ class Play extends Phaser.Scene {
 
             if(Phaser.Input.Keyboard.JustDown(keySPACE)) {
                 if(this.selectionOne){
-                    this.projectileSkill()
+                    this.increaseAttackRange()
                 }
     
                 else if(this.selectionTwo){
-                    this.increaseAttackRange()
+                    this.projectileSkill()
                 }
     
                 else if(this.selectionThree){
                     this.increaseDamage()
                 }
 
-                this.upgradeText.destroy()
-                this.skillOneText.destroy()
-                this.skillTwoText.destroy()
-                this.skillThreeText.destroy()
+                this.upgradeUI.destroy()
+                this.skillOneUI.destroy()
+                this.skillTwoUI.destroy()
+                this.skillThreeUI.destroy()
 
                 this.paused = false
                 this.physics.resume()
             }
-
-
-        }
-        
-        
+        }  
     }
 
     collisions() {
@@ -1071,11 +1067,12 @@ class Play extends Phaser.Scene {
         this.paused = true
         this.physics.pause()
 
-        // add text
-        this.upgradeText = this.add.text(game.config.width/2, game.config.height/2 - 200, 'Choose Your Upgrade', skillConfig).setOrigin(0.5).setDepth(19)
-        this.skillOneText = this.add.text(game.config.width/2, game.config.height/2 - 100, 'Spit Through ' + (this.enemiesCanHit + 1) + ' Enemies', skillConfig).setOrigin(0.5).setDepth(19)
-        this.skillTwoText = this.add.text(game.config.width/2, game.config.height/2, 'Increase Attack Range', skillConfig).setOrigin(0.5).setDepth(19)
-        this.skillThreeText = this.add.text(game.config.width/2, game.config.height/2 + 100, 'Increase All Damage', skillConfig).setOrigin(0.5).setDepth(19)
+        //add UI
+        this.upgradeUI = this.add.image(centerX, centerY, 'upgradeUI').setOrigin(0.5).setDepth(19).setScale(1.6)
+        this.skillOneUI = this.add.image(centerX, centerY, 'lUpgUI').setOrigin(0.5).setDepth(19).setScale(1.6)
+        this.skillTwoUI = this.add.image(centerX, centerY, 'mUpgUI').setOrigin(0.5).setDepth(19).setScale(1.6)
+        this.skillThreeUI = this.add.image(centerX, centerY, 'rUpgUI').setOrigin(0.5).setDepth(19).setScale(1.6)
+    
     }
 
     projectileSkill() {
@@ -1168,7 +1165,7 @@ class Play extends Phaser.Scene {
         devCredits.body.setVelocityX(-150)
         let menuText = this.add.bitmapText(1600, centerY, 'wTH', 'Press (M) to go to Menu').setScale(1.25).setDepth(4).setOrigin(0.42, 0.5)
 
-        this.time.delayedCall(36000, () => {
+        this.time.delayedCall(32000, () => {
             this.tweens.add({
                 targets: menuText,
                 x: centerX,
