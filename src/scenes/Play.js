@@ -317,23 +317,9 @@ class Play extends Phaser.Scene {
         else{
             console.log('tutorial')
         }
-        
 
-        let timeConfig = {
-            frontFamily: 'Courier',
-            fontSize: '42px',
-            //backgroundColor: 'rgba(128, 128, 128, 0.15)',
-            color: '#FFFFFF',
-            align: 'center',
-            padding: {
-                top: 5,
-                bottom: 5,
-            },
-            fixedWidth: 200
-        }
-
+        // in game play UI (timer, level, & xp)
         this.timerText = this.add.bitmapText(centerX, 0, 'wTH', this.timer).setOrigin(0.5, 0).setScale(0.7)
-        //this.castleText = this.add.text(100, 0, this.castleHP, timeConfig).setOrigin(0.5, 0)
         this.levelText = this.add.bitmapText(860, 0, 'wTH', 'LVL: ' + this.currentLevel).setOrigin(0.5, 0).setScale(0.7)
         this.xpText = this.add.bitmapText(860, 50, 'wTH', this.currentXP + '/' + this.xpNeed).setOrigin(0.5, 0).setScale(0.7)
 
@@ -875,12 +861,9 @@ class Play extends Phaser.Scene {
         this.frogProjectileGroup.add(this.frogProjectile)
     }
 
-    dFlyCollision(frog, DFly) {
-        // console.log('dragon flew by')
-    }
+    dFlyCollision(frog, DFly) {}
 
     eatDFlyCollision(eat, dFly) {
-        // console.log('projectile hit')
         if(!this.dFlyEaten){
             this.dFlyEaten = true
             dFly.setVelocityX(0)
@@ -1055,19 +1038,6 @@ class Play extends Phaser.Scene {
 
     skillScreen() {
 
-        let skillConfig = {
-            frontFamily: 'Courier',
-            fontSize: '32px',
-            //backgroundColor: 'rgba(128, 128, 128, 0.15)',
-            color: '#FFFFFF',
-            align: 'center',
-            padding: {
-                top: 5,
-                bottom: 5,
-            },
-            fixedWidth: 500
-        }
-
         //pause game
         this.paused = true
         this.physics.pause()
@@ -1076,33 +1046,14 @@ class Play extends Phaser.Scene {
         //this.add.rectangle(centerX, centerY, 550, 400, 0x00000).setDepth(21)
         this.upgradeUI = this.add.image(centerX, centerY, 'upgradeUI').setOrigin(0.5).setDepth(19).setScale(1)
         this.skillOneUI = this.add.image(centerX, centerY, 'tSelect').setOrigin(0.5).setDepth(19)
-        //this.add.image(centerX, centerY, 'lUpgUI').setOrigin(0.5).setDepth(19).setScale(1.6)
-        
         this.skillTwoUI = this.add.image(centerX, centerY, 'mSelect').setOrigin(0.5).setDepth(19)
-        //this.add.image(centerX, centerY, 'mUpgUI').setOrigin(0.5).setDepth(19).setScale(1.6)
-        
         this.skillThreeUI = this.add.image(centerX, centerY, 'bSelect').setOrigin(0.5).setDepth(19)
-        //this.add.image(centerX, centerY, 'rUpgUI').setOrigin(0.5).setDepth(19).setScale(1.6)
         
         this.upgTextUI = [
             this.add.bitmapText(centerX, 285, 'TH', 'Increase Attack Range').setDepth(20).setScale(0.5).setOrigin(0.5),
             this.add.bitmapText(centerX, 358, 'TH', 'Pierce Enemies').setDepth(20).setScale(0.5).setOrigin(0.5),
             this.add.bitmapText(centerX, 435, 'TH', 'Increase All Damage').setDepth(20).setScale(0.5).setOrigin(0.5)
         ]
-        /*this.upgTextUI = [
-        // choose your upgrade text
-        this.add.bitmapText(centerX, 182, 'TH', 'Choose Your Power Up!').setOrigin(0.5).setDepth(20).setScale(0.70),
-        // attack range text
-        this.add.bitmapText(210, 229, 'TH', 'ATTACK').setDepth(20).setScale(0.55),
-        this.add.bitmapText(240, 260, 'TH', 'RANGE').setDepth(20).setScale(0.55),
-        // piercing text
-        this.add.bitmapText(422, 226, 'TH', 'PIERCE').setDepth(20).setScale(0.55),
-        this.add.bitmapText(452, 257, 'TH', 'ENEMIES').setDepth(20).setScale(0.55),
-        // increase damage text
-        this.add.bitmapText(637, 220, 'TH', 'INCREASE').setDepth(20).setScale(0.55),
-        this.add.bitmapText(667, 251, 'TH', 'DAMAGE').setDepth(20).setScale(0.55)] */
-
-        console.log(this.upgTextUI[0])
 
     }
 
@@ -1177,7 +1128,7 @@ class Play extends Phaser.Scene {
     }
 
     ratFlash(){
-        //console.log('hi')
+        
         this.ratKing.setTintFill(0xffffff)
         this.time.delayedCall(75, () => {
             this.ratKing.clearTint()
