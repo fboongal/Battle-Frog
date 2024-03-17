@@ -523,7 +523,7 @@ class Play extends Phaser.Scene {
                 this.keyDownCode()
                 
                 //temp
-                this.ThunderWhiteOut()
+                //this.ThunderWhiteOut()
             }
 
             else if(Phaser.Input.Keyboard.JustDown(cursors.up) || Phaser.Input.Keyboard.JustDown(keyUP)) {
