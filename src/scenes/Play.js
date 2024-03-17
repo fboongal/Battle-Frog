@@ -1186,7 +1186,7 @@ class Play extends Phaser.Scene {
 
     credits(){
         //credits stuff
-        let devCreditsText = 'Developed by Alex Beteta & Franchesca Boongaling          Special Thanks to Nathan Altice, Nate Laffan, Ruby Hirsch, and Ishan Gupta         And Thank YOU for Playing!'
+        let devCreditsText = 'Developed by Alex Beteta & Franchesca Boongaling          Special Thanks to Nathan Altice, Nate Laffan, Ruby Hirsch, Ishan Gupta, and Jennie Le            Thank You for Playing!'
         let devCredits = this.add.bitmapText(1100, centerY, 'wTH', devCreditsText).setScale(1.25).setDepth(4).setOrigin(0, 0.5)
         this.physics.add.existing(devCredits)
         devCredits.body.setVelocityX(-150)
