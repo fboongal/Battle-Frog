@@ -107,9 +107,15 @@ class Menu extends Phaser.Scene {
             frameWidth: 128,
             frameHeight: 128
         })
+
+        this.load.spritesheet('dancerat', 'img/ratdance.png', {
+            frameWidth: 210,
+            frameHeight: 374
+        })
     }
 
     create(){
+
         // set up cursor keys
         cursors = this.input.keyboard.createCursorKeys()
 

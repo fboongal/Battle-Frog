@@ -118,11 +118,20 @@ class Play extends Phaser.Scene {
 
         //game end
         this.gameEnd = false
+
+        //tutorial
+        this.hasHopped = false
+        this.hasAttacked = false
+        this.hasEaten = false
+        this.hasSpit = false
     }
 
     create(menuScene){
+
+        this.theMenuScene = menuScene
+
         //ambient sound
-        this.ambiSounds = this.sound.add('ambi', {volume: 0.3, loop: true})
+        this.ambiSounds = this.sound.add('ambi', {volume: 0.5, loop: true})
         this.ambiSounds.play()
 
         // set up cursor keys
@@ -325,6 +334,10 @@ class Play extends Phaser.Scene {
 
         else{
             console.log('tutorial')
+            this.tutTexts = ['Press (W) and (S) to Hop Up and Down the Lily Pads', 'Press (D) to Attack Rats', 'Press (A) to Eat Bugs', 'Press (A) Again to Spit Out Bugs that Deal Damage to Rats' ]
+            this.tutTextsPos = 0
+            this.tutText = this.add.bitmapText(centerX, 500, 'wTH', this.tutTexts[this.tutTextsPos] ).setOrigin(0.5, 0.5).setScale(0.5)
+            
         }
 
         // in game play UI (timer, level, & xp)
@@ -443,6 +456,20 @@ class Play extends Phaser.Scene {
             })
         })
 
+        
+        this.anims.create({
+            key: 'dance',
+            frameRate: 24,
+            repeat: -1,
+            frames: this.anims.generateFrameNumbers('dancerat', {
+                start:0,
+                end: 226
+            })
+        })
+
+        this.dancingRat = this.add.sprite(centerX, centerY).setAlpha(0)
+        this.dancingRat.anims.play('dance')
+
         // eat/spit animation prototype
         this.frog.on('animationcomplete', function () {
             if(this.eatAnim) {
@@ -482,6 +509,10 @@ class Play extends Phaser.Scene {
             this.scene.start('menuScene')
         }
 
+        this.hopTut()
+        this.attackTut()
+        this.eatTut()
+
         if(!this.paused){
 
             //make rain fall
@@ -490,9 +521,9 @@ class Play extends Phaser.Scene {
             // new hop input
             if(Phaser.Input.Keyboard.JustDown(cursors.down) || Phaser.Input.Keyboard.JustDown(keyDOWN)) {
                 this.keyDownCode()
-
+                
                 //temp
-                //this.ThunderWhiteOut()
+                this.ThunderWhiteOut()
             }
 
             else if(Phaser.Input.Keyboard.JustDown(cursors.up) || Phaser.Input.Keyboard.JustDown(keyUP)) {
@@ -1161,7 +1192,7 @@ class Play extends Phaser.Scene {
         devCredits.body.setVelocityX(-150)
         let menuText = this.add.bitmapText(1600, centerY, 'wTH', 'Press (M) to go to Menu').setScale(1.25).setDepth(4).setOrigin(0.42, 0.5)
 
-        this.time.delayedCall(32000, () => {
+        this.time.delayedCall(35000, () => {
             this.tweens.add({
                 targets: menuText,
                 x: centerX,
@@ -1207,6 +1238,7 @@ class Play extends Phaser.Scene {
             this.rainLoop.loop = true
             this.rainLoop.play()
             this.rain.setAlpha(1)
+            this.dancingRat.setAlpha(1)
             this.night.setAlpha(0.15).setDepth(50)
             this.tweens.addCounter({
                 from: 1,
@@ -1216,10 +1248,45 @@ class Play extends Phaser.Scene {
                 {
                     const value = tween.getValue()
                     this.whiteOut.setAlpha(value)
+                    this.dancingRat.setAlpha(value)
                 }
             })
             this.whiteOut.setAlpha(0)
         })
     }
+
+    hopTut(){
+        if(this.theMenuScene.tutorial){ // if this is the tutorial
+            //if player hasn't ran thise code and presses up or down to hop...
+            if(!this.hasHopped && (Phaser.Input.Keyboard.JustDown(keyDOWN) || Phaser.Input.Keyboard.JustDown(keyUP))){
+                this.tutTextsPos++ //increase text array number
+                this.tutText.text = this.tutTexts[this.tutTextsPos] // set next text based on text array number
+                this.hasHopped = true // set has hopped to true so player can't alter anything with another hop
+            }
+        }
+
+    }
+    
+    attackTut(){
+        if(this.theMenuScene.tutorial && this.hasHopped){
+            if(!this.hasAttacked && (Phaser.Input.Keyboard.JustDown(keyRIGHT))){
+                this.tutTextsPos++ //increase text array number
+                this.tutText.text = this.tutTexts[this.tutTextsPos]
+                this.hasAttacked = true
+            }
+        }
+    }
+
+    eatTut(){
+        if(this.theMenuScene.tutorial && this.hasHopped && this.hasAttacked){
+            if(!this.hasEaten && (Phaser.Input.Keyboard.JustDown(keyLEFT))){
+                this.tutTextsPos++ //increase text array number
+                this.tutText.text = this.tutTexts[this.tutTextsPos]
+                this.hasEaten = true
+            }
+        }
+    }
 }
+
+
 
