@@ -16,15 +16,15 @@ class GameOver extends Phaser.Scene {
         this.add.image(centerX, centerY, 'gameOver')
         this.add.bitmapText(centerX, centerY - 50, 'rTH', 'The Castle has been Seiged!').setOrigin(0.5, 0).setScale(0.925)
         this.survivalTime = this.add.bitmapText(centerX, centerY + 20, 'TH','You defended the castle for ' + this.myscore + ' seconds').setOrigin(0.5, 0).setScale(0.45)
-        this.restartText = this.add.bitmapText(centerX, centerY + 75, 'TH', 'Defend Once More?').setOrigin(0.5, 0).setScale(0.65)
+        this.restartText = this.add.bitmapText(centerX, centerY + 85, 'TH', 'Defend Once More?').setOrigin(0.5, 0).setScale(0.65)
 
         // ye or nay
-        this.yay = this.add.bitmapText(centerX - 60, centerY + 155, 'TH', 'YAY').setOrigin(0.5).setScale(0.9).setAlpha(0)
-        this.nay = this.add.bitmapText(centerX + 60, centerY + 155, 'TH', 'NAY').setOrigin(0.5).setScale(0.9).setAlpha(1)
+        this.yay = this.add.bitmapText(centerX - 60, centerY + 160, 'TH', 'YAY').setOrigin(0.5).setScale(0.9).setAlpha(0)
+        this.nay = this.add.bitmapText(centerX + 60, centerY + 160, 'TH', 'NAY').setOrigin(0.5).setScale(0.9).setAlpha(1)
 
         // red ye or nay
-        this.yayRed = this.add.bitmapText(centerX - 60, centerY + 155, 'rTH', 'YAY').setOrigin(0.5).setScale(0.9).setAlpha(1)
-        this.nayRed = this.add.bitmapText(centerX + 60, centerY + 155, 'rTH', 'NAY').setOrigin(0.5).setScale(0.9).setAlpha(0)
+        this.yayRed = this.add.bitmapText(centerX - 60, centerY + 160, 'rTH', 'YAY').setOrigin(0.5).setScale(0.9).setAlpha(1)
+        this.nayRed = this.add.bitmapText(centerX + 60, centerY + 160, 'rTH', 'NAY').setOrigin(0.5).setScale(0.9).setAlpha(0)
 
         // set selections
         this.selectionOne = true
