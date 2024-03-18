@@ -11,29 +11,65 @@ class GameOver extends Phaser.Scene {
         console.log(this.myscore)
         keyMENU = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.M)
         keyRESTART = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.R)
+        
+        this.add.image(centerX, centerY, 'gameOver')
+        this.add.bitmapText(centerX, centerY - 50, 'rTH', 'The Castle has been Seiged!').setOrigin(0.5, 0).setScale(0.925)
+        this.survivalTime = this.add.bitmapText(centerX, centerY + 20, 'TH','You defended the castle for ' + this.myscore + ' seconds').setOrigin(0.5, 0).setScale(0.45)
+        this.restartText = this.add.bitmapText(centerX, centerY + 75, 'TH', 'Defend Once More?').setOrigin(0.5, 0).setScale(0.65)
 
-        let timeConfig = {
-            frontFamily: 'Courier',
-            fontSize: '42px',
-            //backgroundColor: 'rgba(128, 128, 128, 0.15)',
-            color: '#843605',
-            align: 'center',
-            padding: {
-                top: 5,
-                bottom: 5,
-            },
-            fixedWidth: 800
+        // ye or nay
+        this.yay = this.add.bitmapText(centerX - 60, centerY + 155, 'TH', 'YAY').setOrigin(0.5).setScale(0.9).setAlpha(0)
+        this.nay = this.add.bitmapText(centerX + 60, centerY + 155, 'TH', 'NAY').setOrigin(0.5).setScale(0.9).setAlpha(1)
+
+        // red ye or nay
+        this.yayRed = this.add.bitmapText(centerX - 60, centerY + 155, 'rTH', 'YAY').setOrigin(0.5).setScale(0.9).setAlpha(1)
+        this.nayRed = this.add.bitmapText(centerX + 60, centerY + 155, 'rTH', 'NAY').setOrigin(0.5).setScale(0.9).setAlpha(0)
+
+        // set selections
+        this.selectionOne = true
+        this.selectionTwo = false
         }
-
-        this.survivalTime = this.add.text(game.config.width/2, game.config.height/2, 'The castle stood for ' + this.myscore + ' seconds', timeConfig).setOrigin(0.5, 0)
-        this.restartText = this.add.text(game.config.width/2, game.config.height/2 + 100, 'Press R to restart', timeConfig).setOrigin(0.5, 0)
-    }
 
     update() {
+        // set input keys
+        keyLEFT = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A)
+        keyRIGHT = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D)
+        keySPACE = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE)
 
-        if(Phaser.Input.Keyboard.JustDown(keyRESTART)){
-            //this.sound.play('pickup')
-            this.scene.start('menuScene')
+        // set selections
+        if(this.selectionOne) {
+            this.yayRed.setAlpha(1)
+            this.yay.setAlpha(0)
+
+            this.nay.setAlpha(1)
+            this.nayRed.setAlpha(0)
         }
+        else if(this.selectionTwo) {
+            this.nayRed.setAlpha(1)
+            this.nay.setAlpha(0)
+
+            this.yay.setAlpha(1)
+            this.yayRed.setAlpha(0)
+        }
+
+        if(Phaser.Input.Keyboard.JustDown(keyRIGHT) && this.selectionOne){
+            this.selectionOne = false    
+            this.selectionTwo = true   
+       }
+       else if(Phaser.Input.Keyboard.JustDown(keyLEFT) && !this.selectionOne){
+            this.selectionOne = true
+            this.selectionTwo = false
+           }
+
+       if(Phaser.Input.Keyboard.JustDown(keySPACE)) {
+           if(this.selectionOne){
+                this.scene.start('playScene', this)
+           }
+
+           else if(this.selectionTwo){
+                this.scene.stop('playScene', this)
+                this.scene.start('menuScene', this)
+           }
+       }
     }
 }

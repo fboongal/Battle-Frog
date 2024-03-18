@@ -78,7 +78,7 @@ class Play extends Phaser.Scene {
         this.dFlyEaten = false
 
         // castle
-        this.castleHP = 10
+        this.castleHP = 1
         this.castleBars = ['0HP','1HP','2HP','3HP','4HP','5HP','6HP','7HP','8HP','9HP','10HP']
 
         //knock back variable
@@ -91,13 +91,16 @@ class Play extends Phaser.Scene {
 
         // xp
         this.currentXP = 0
-        this.xpNeed = 10
+        this.xpNeed = 1
 
         //levels
         this.currentLevel = 1
 
-        //pause
-        this.paused = false
+        //pause for power up screen
+        this.powerUpScreen = false
+
+        //pause for game over screen
+        this.gameOver = false
 
         //skill menu
         this.selectionOne = true
@@ -611,7 +614,7 @@ class Play extends Phaser.Scene {
             })
         }
 
-        if(!this.paused){
+        if(!this.powerUpScreen && !this.gameOver){
 
             //make rain fall
             this.rain.tilePositionY -= 7
@@ -680,7 +683,7 @@ class Play extends Phaser.Scene {
             this.xpCode() // runs xp code
             }
 
-        else if(this.paused) {
+        else if(this.powerUpScreen) {
 
                 // Highlight upgrade UI
                 if(this.selectionOne){
@@ -774,7 +777,7 @@ class Play extends Phaser.Scene {
                     this.upgTextUI[i].destroy()
                 } 
 
-                this.paused = false
+                this.powerUpScreen = false
                 this.physics.resume()
             }
         }  
@@ -831,7 +834,7 @@ class Play extends Phaser.Scene {
         }
 
         // check to see if frog has reached hop point
-        const tolerance = 20
+        const tolerance = 30
 
         const distance = Phaser.Math.Distance.BetweenPoints(this.frog, this.hopPoint)
   
@@ -921,7 +924,7 @@ class Play extends Phaser.Scene {
     }
 
     addRat() {
-        if(!this.paused){
+        if(!this.powerUpScreen && !this.gameOver){
             this.ratRandom = Phaser.Math.Between(0, 3)
 
             if(this.ratRandom == 0){
@@ -1024,7 +1027,7 @@ class Play extends Phaser.Scene {
     }
 
     addDFly() {
-        if(!this.paused){
+        if(!this.powerUpScreen && !this.gameOver){
             this.dFlyRandom = Phaser.Math.Between(0, 3)
 
             if(this.dFlyRandom == 0){
@@ -1152,8 +1155,13 @@ class Play extends Phaser.Scene {
     
             enemy.knockBack(true)
             
-            if(this.castleHP < 1) {
-                this.time.delayedCall(1000, () => { this.scene.start('gameOverScene', this.timer) })
+            if(this.castleHP < 1 && !this.scene.isActive('gameOverScene')) {
+                this.time.delayedCall(1000, () => { 
+                    this.physics.pause()
+                    this.scene.run('gameOverScene', this.timer) 
+                })
+
+                this.gameOver = true
             }
 
             this.castleFlash()
@@ -1179,7 +1187,7 @@ class Play extends Phaser.Scene {
     }
 
     addChallenge() {
-        if(!this.paused){
+        if(!this.powerUpScreen && !this.gameOver){
             // spawn faster
             if(this.dFLySpawnDelay > 1300){
                 this.dFlySpawnDelay -= 300
@@ -1193,7 +1201,7 @@ class Play extends Phaser.Scene {
     }
 
     addTime() {
-        if(this.castleHP > 0 && !this.paused){
+        if(this.castleHP > 0 && !this.powerUpScreen && !this.gameOver){ //
             this.timer++
             this.timerText.text = this.timer
             //console.log(this.timer)
@@ -1252,7 +1260,7 @@ class Play extends Phaser.Scene {
     skillScreen() {
 
         //pause game
-        this.paused = true
+        this.powerUpScreen = true
         this.physics.pause()
 
         //add UI
