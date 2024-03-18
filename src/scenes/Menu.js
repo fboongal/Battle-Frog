@@ -39,6 +39,10 @@ class Menu extends Phaser.Scene {
         this.load.image('hbutton', '/img/UI/highlighted button.png')
         this.load.image('title', '/img/UI/title.png')
 
+        // load check boxes
+        this.load.image('cBox', '/img/UI/checkbox.png')
+        this.load.image('mBox', '/img/UI/checkmark.png')
+
         // load bitmap font
         this.load.bitmapFont('BC', 'font/BC.png', 'font/BC.xml') // Black Castle found from https://www.dafont.com/black-castle.font by Richard William Mueller
         this.load.bitmapFont('wBC', 'font/wBC.png', 'font/wBC.xml') // White Black Castle
