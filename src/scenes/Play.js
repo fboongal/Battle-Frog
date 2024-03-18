@@ -316,7 +316,7 @@ class Play extends Phaser.Scene {
         })
 
         // in game play UI (timer, level, & xp)
-        this.xpNeed = Math.floor(this.xpNeed)
+        this.xpNeed = Math.ceil(this.xpNeed)
         this.timerText = this.add.bitmapText(centerX, 0, 'wTH', this.timer).setOrigin(0.5, 0).setScale(0.7)
         this.levelText = this.add.bitmapText(860, 0, 'wTH', 'LVL: ' + this.currentLevel).setOrigin(0.5, 0).setScale(0.7)
         this.xpText = this.add.bitmapText(860, 50, 'wTH', this.currentXP + '/' + this.xpNeed).setOrigin(0.5, 0).setScale(0.7)
@@ -487,69 +487,70 @@ class Play extends Phaser.Scene {
         this.hopTut()
 
         if(!this.theMenuScene.tutorial){
-//enemy spawn timers
-if(this.timer == 30 && !this.spawnElites){
-    this.eliteCanSpawn = true
-    this.spawnElites = true
-}
-
-if(this.timer == 90 && !this.spawnPurples){
-    this.purpleCanSpawn = true
-    this.spawnPurples = true
-}
-
-if(this.timer == 180 && !this.fakeWin){
-    this.ratSpawnTimer.remove()
-    this.dFlySpawnTimer.remove()
-    this.gameTimer.remove()
-    this.challengeTimer.remove()
-    this.theMenuScene.bgMusic.destroy()
-    this.sound.play('winsound')
-    this.destroyAll.setPosition(centerX, centerY)
-    this.fakeWin = true
-
-    this.time.delayedCall(4000, () => {
-        this.destroyAll.setPosition(-3000, -3000)
-        this.time.delayedCall(4000, () => {
-            this.bossMusic = this.sound.add('bossmusic', {volume: 1, loop: true})
-            this.bossMusic.play()
-        })
-        this.ThunderWhiteOut()
-    })
-
-    this.time.delayedCall(10000, () => {
-        this.kingCanSpawn = true
-        this.ratKing = new Rat(this, this.ratSpeed, this.ratPos.y, this.laneY, 3).setOrigin(0.5, 1)
-        this.ratKing.anims.play('ratkingrun').setSize(200,160)
-        this.ratGroup.add(this.ratKing)
-        this.ratKing.setDepth(2 + this.laneDepthMod)
-
-        // spawn enemies every X seconds
-        this.ratSpawnTimer = this.time.addEvent({
-            delay: this.ratSpawnDelay,
-            callback: this.addRat,
-            callbackScope: this,
-            loop: true
-        })
-
-        // spawn dFlys every 5 seconds
-        this.dFlySpawnTimer = this.time.addEvent({
-            delay: this.dFlySpawnDelay,
-            callback: this.addDFly,
-            callbackScope: this,
-            loop: true
-        })
-
-        // ingame timer
-        this.gameTimer = this.time.addEvent({
-            delay: 1000,
-            callback: this.addTime,
-            callbackScope: this,
-            loop: true
-        })
-    })
-}
+        //enemy spawn timers
+        if(this.timer == 30 && !this.spawnElites){
+            this.eliteCanSpawn = true
+            this.spawnElites = true
         }
+
+        if(this.timer == 90 && !this.spawnPurples){
+            this.purpleCanSpawn = true
+            this.spawnPurples = true
+        }
+
+        if(this.timer == 180 && !this.fakeWin){
+            this.ratSpawnTimer.remove()
+            this.dFlySpawnTimer.remove()
+            this.gameTimer.remove()
+            this.challengeTimer.remove()
+            this.theMenuScene.bgMusic.stop()
+            this.theMenuScene.bgMusic.destroy()
+            this.sound.play('winsound')
+            this.destroyAll.setPosition(centerX, centerY)
+            this.fakeWin = true
+
+            this.time.delayedCall(4000, () => {
+                this.destroyAll.setPosition(-3000, -3000)
+                this.time.delayedCall(4000, () => {
+                    this.bossMusic = this.sound.add('bossmusic', {volume: 1, loop: true})
+                    this.bossMusic.play()
+                })
+                this.ThunderWhiteOut()
+            })
+
+            this.time.delayedCall(10000, () => {
+                this.kingCanSpawn = true
+                this.ratKing = new Rat(this, this.ratSpeed, this.ratPos.y, this.laneY, 3).setOrigin(0.5, 1)
+                this.ratKing.anims.play('ratkingrun').setSize(200,160)
+                this.ratGroup.add(this.ratKing)
+                this.ratKing.setDepth(2 + this.laneDepthMod)
+
+                // spawn enemies every X seconds
+                this.ratSpawnTimer = this.time.addEvent({
+                    delay: this.ratSpawnDelay,
+                    callback: this.addRat,
+                    callbackScope: this,
+                    loop: true
+                })
+
+                // spawn dFlys every 5 seconds
+                this.dFlySpawnTimer = this.time.addEvent({
+                    delay: this.dFlySpawnDelay,
+                    callback: this.addDFly,
+                    callbackScope: this,
+                    loop: true
+                })
+
+                // ingame timer
+                this.gameTimer = this.time.addEvent({
+                    delay: 1000,
+                    callback: this.addTime,
+                    callbackScope: this,
+                    loop: true
+                })
+            })
+        }
+                }
         
 
         if(!this.powerUpScreen && !this.gameOver){
@@ -1194,6 +1195,7 @@ if(this.timer == 180 && !this.fakeWin){
             this.currentXP = 0
             this.updateXP()
             this.xpNeed *= 1.5
+            this.xpNeed = Math.ceil(this.xpNeed)
             this.skillScreen()
             
         }
