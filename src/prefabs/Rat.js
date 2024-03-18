@@ -130,6 +130,10 @@ class Rat extends Phaser.Physics.Arcade.Sprite {
                             this.parentScene.time.delayedCall(2000, () => { 
                                 this.destroy()
                             })
+                            //tutorial
+                            if(this.parentScene.theMenuScene.tutorial && castle){
+                                this.parentScene.addRat()
+                            }//tutorial
                         }
     
     

@@ -79,11 +79,18 @@ class DFly extends Phaser.Physics.Arcade.Sprite {
             onComplete: () => {
                 this.knockedBack = false
                 if(this.hp < 1 || castle){
-                    this.destroy()
                     if(!castle){
                         this.parentScene.currentXP++
                     }
+
                     this.parentScene.xpText.text = this.parentScene.currentXP + '/' + this.parentScene.xpNeed
+
+                    //tutorial
+                    if(this.parentScene.theMenuScene.tutorial && castle){
+                        this.parentScene.addDFly()
+                    }//tutorial
+
+                    this.destroy()
                 }
                 else {
                     this.setVelocityX(this.speed)

@@ -139,6 +139,9 @@ class Play extends Phaser.Scene {
         //spit out and hit rat with bug
         this.hasSpitAndHitRat = false
         this.hasSpitAndHitRatNext = false
+        //block 
+        this.hasBlocked = false
+        this.hasBlockedNext = false
     }
 
     create(menuScene){
@@ -354,7 +357,10 @@ class Play extends Phaser.Scene {
             'Press (D) to Attack the Rat',
             'Press (A) to Eat', 
             'Press (A) to Eat the Bug',
-            'Press (A) Again to Spit Out the Bug and Hit the Rat']
+            'Press (A) Again to Spit Out the Bug and Hit the Rat',
+            'Let a Rat Run Into You to Block them, Knocking Them Back',
+            'Tutorial Complete! Press (M) to go to Menu'
+        ]
             this.tutTextsPos = 0
             this.tutText = this.add.bitmapText(centerX, 500, 'wTH', this.tutTexts[this.tutTextsPos] ).setOrigin(0.5, 0.5).setScale(0.5)
             
@@ -807,12 +813,6 @@ class Play extends Phaser.Scene {
             this.sound.play('spitsound', {volume: 1.75})
             this.dFlyEaten = false
             this.pressedEat = false
-
-            //TUTORIAL
-            if(this.theMenuScene.tutorial && !this.hasSpitAndHitRat &&this.hasHoppedNext && this.hasAttackedNext && this.hasAttackedRatNext && this.hasEatenNext && this.hasEatenBug){
-                this.addDFly()
-                console.log('spat while in tut')
-            }
         }
     }
 
@@ -893,6 +893,11 @@ class Play extends Phaser.Scene {
     ratCollision(frog, rat) {
 
         if(!this.blocked && !this.eating) {
+            //TUTORIAL
+            if(this.theMenuScene.tutorial && !this.hasBlocked &&this.hasHoppedNext && this.hasAttackedNext && this.hasAttackedRatNext && this.hasEatenNext && this.hasEatenBug && this.hasSpitAndHitRatNext){
+                this.blockTut()
+            }
+
             this.blocked = true
             this.frog.anims.play('block')
             this.knockBackForce = this.baseKnockBackForce * 3
@@ -981,6 +986,12 @@ class Play extends Phaser.Scene {
     frogProjectileRatCollision(frogProjectile, enemy) {
         if(!enemy.spitHit){
 
+            //TUTORIAL
+            if(this.theMenuScene.tutorial && !this.hasSpitAndHitRat &&this.hasHoppedNext && this.hasAttackedNext && this.hasAttackedRatNext && this.hasEatenNext && this.hasEatenBugNext){
+                this.spitAndHitRatTut()
+            }
+            
+            
             //console.log(enemy.hp)
             if(enemy.hit == false && !enemy.spitHit){
                 enemy.hp -= this.spitDmg
@@ -1317,7 +1328,7 @@ class Play extends Phaser.Scene {
         if(this.theMenuScene.tutorial && !this.hasHoppedNext){ // if this is the tutorial and hasn't hopped both ways...
             if(this.hasHoppedDown && this.hasHoppedUp){
                 //check mark and sound go here
-                this.time.delayedCall(2000, () => {
+                this.time.delayedCall(1000, () => {
                     if(!this.hasHoppedNext){
                         console.log('timedelay')
                         this.tutTextsPos++ //increase text array number
@@ -1332,7 +1343,7 @@ class Play extends Phaser.Scene {
     
     attackTut(){
         //check and sound here
-        this.time.delayedCall(2000, () => { 
+        this.time.delayedCall(1000, () => { 
             if(!this.hasAttackedNext){
                 this.tutTextsPos++ //increase text array number
                 this.tutText.text = this.tutTexts[this.tutTextsPos] // set next text based on text array number
@@ -1344,7 +1355,7 @@ class Play extends Phaser.Scene {
     }
 
     attackRatTut(){
-        this.time.delayedCall(2000, () => { 
+        this.time.delayedCall(1000, () => { 
             if(!this.hasAttackedRatNext){
                 this.tutTextsPos++ //increase text array number
                 this.tutText.text = this.tutTexts[this.tutTextsPos] // set next text based on text array number
@@ -1356,7 +1367,7 @@ class Play extends Phaser.Scene {
     }
 
     eatTut(){
-        this.time.delayedCall(2000, () => { 
+        this.time.delayedCall(1000, () => { 
             if(!this.hasEatenNext){
                 this.tutTextsPos++ //increase text array number
                 this.tutText.text = this.tutTexts[this.tutTextsPos]
@@ -1368,7 +1379,7 @@ class Play extends Phaser.Scene {
     }
 
     eatBugTut(){
-        this.time.delayedCall(2000, () => { 
+        this.time.delayedCall(1000, () => { 
             if(!this.hasEatenBugNext){
                 this.tutTextsPos++ //increase text array number
                 this.tutText.text = this.tutTexts[this.tutTextsPos]
@@ -1380,14 +1391,26 @@ class Play extends Phaser.Scene {
     }
 
     spitAndHitRatTut(){
-        this.time.delayedCall(2000, () => { 
+        this.time.delayedCall(1000, () => { 
             if(!this.hasSpitAndHitRatNext){
                 this.tutTextsPos++ //increase text array number
                 this.tutText.text = this.tutTexts[this.tutTextsPos]
                 this.hasSpitAndHitRatNext = true
+                this.addRat()
             }
         })
         this.hasSpitAndHitRat = true //cant call this function again
+    }
+
+    blockTut(){
+        this.time.delayedCall(1000, () => { 
+            if(!this.hasBlockedNext){
+                this.tutTextsPos++ //increase text array number
+                this.tutText.text = this.tutTexts[this.tutTextsPos]
+                this.hasBlockedNext = true
+            }
+        })
+        this.hasBlocked = true //cant call this function again
     }
 }
 
