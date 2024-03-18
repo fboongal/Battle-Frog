@@ -13,7 +13,7 @@ class Play extends Phaser.Scene {
         this.frogBounce = 0.5
         this.frogProjectileSpeed = 500
         this.blocked = false
-        this.atkDmg = 100
+        this.atkDmg = 10000000
         this.spitDmg = 100
 
         // hop points
@@ -498,7 +498,7 @@ class Play extends Phaser.Scene {
             this.spawnPurples = true
         }
 
-        if(this.timer == 180 && !this.fakeWin){
+        if(this.timer == 5 && !this.fakeWin){
             this.ratSpawnTimer.remove()
             this.dFlySpawnTimer.remove()
             this.gameTimer.remove()
@@ -1316,8 +1316,20 @@ class Play extends Phaser.Scene {
     }
 
     credits(){
-        //credits stuff
-        let devCreditsText = 'Developed by Alex Beteta & Franchesca Boongaling          Special Thanks to Nathan Altice, Nate Laffan, Ruby Hirsch, Ishan Gupta, and Jennie Le            Thank You for Playing!'
+        // fade health bar UI
+        this.tweens.addCounter({
+            from: 1,
+            to: 0,
+            duration: 2000,
+            onUpdate: tween =>
+                {
+                const val = tween.getValue()
+                this.castleHpBar.setAlpha(val) 
+                }
+            }
+        )
+        // credit text
+        let devCreditsText = 'Developed by Alex Beteta & Franchesca Boongaling          Special Thanks to Nathan Altice, Nate Laffan, Ruby Hirsch, Ishan Gupta, and Jennie Le          Thank You for Playing!'
         let devCredits = this.add.bitmapText(1100, centerY, 'wTH', devCreditsText).setScale(1.25).setDepth(4).setOrigin(0, 0.5)
         this.physics.add.existing(devCredits)
         devCredits.body.setVelocityX(-150)
@@ -1354,17 +1366,14 @@ class Play extends Phaser.Scene {
         })
 
         this.time.delayedCall(225, () => {
-            //this.whiteOut.setTintFill(0xffffff)
             this.whiteOut.setAlpha(0)
         })
 
         this.time.delayedCall(300, () => {
-            //this.whiteOut.setTintFill(0xffffff)
             this.whiteOut.setAlpha(1)
         })
 
         this.time.delayedCall(500, () => {
-            //this.whiteOut.setTintFill(0xffffff)
             this.rainLoop = this.sound.add('rainloop', {volume: 0.25})
             this.rainLoop.loop = true
             this.rainLoop.play()
