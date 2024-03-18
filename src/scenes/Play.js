@@ -91,7 +91,7 @@ class Play extends Phaser.Scene {
 
         // xp
         this.currentXP = 0
-        this.xpNeed = 10
+        this.xpNeed = 1
 
         //levels
         this.currentLevel = 1
@@ -1087,14 +1087,14 @@ class Play extends Phaser.Scene {
         //add UI
         //this.add.rectangle(centerX, centerY, 550, 400, 0x00000).setDepth(21)
         this.upgradeUI = this.add.image(centerX, centerY, 'upgradeUI').setOrigin(0.5).setDepth(19).setScale(1)
-        this.skillOneUI = this.add.image(centerX, centerY, 'tSelect').setOrigin(0.5).setDepth(19)
-        this.skillTwoUI = this.add.image(centerX, centerY, 'mSelect').setOrigin(0.5).setDepth(19)
-        this.skillThreeUI = this.add.image(centerX, centerY, 'bSelect').setOrigin(0.5).setDepth(19)
+        this.skillOneUI = this.add.image(centerX, centerY, 'tSelect').setOrigin(0.5).setDepth(20)
+        this.skillTwoUI = this.add.image(centerX, centerY, 'mSelect').setOrigin(0.5).setDepth(29)
+        this.skillThreeUI = this.add.image(centerX, centerY, 'bSelect').setOrigin(0.5).setDepth(20)
         
         this.upgTextUI = [
-            this.add.bitmapText(centerX, 285, 'TH', 'Increase Attack Range').setDepth(20).setScale(0.5).setOrigin(0.5),
-            this.add.bitmapText(centerX, 358, 'TH', 'Pierce Enemies').setDepth(20).setScale(0.5).setOrigin(0.5),
-            this.add.bitmapText(centerX, 435, 'TH', 'Increase All Damage').setDepth(20).setScale(0.5).setOrigin(0.5)
+            this.add.bitmapText(centerX, 275, 'TH', 'Increase Attack Range').setDepth(20).setScale(0.7).setOrigin(0.5),
+            this.add.bitmapText(centerX, 372, 'TH', 'Pierce Enemies').setDepth(20).setScale(0.7).setOrigin(0.5),
+            this.add.bitmapText(centerX, 472, 'TH', 'Increase All Damage').setDepth(20).setScale(0.7).setOrigin(0.5)
         ]
 
     }
