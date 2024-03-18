@@ -91,7 +91,7 @@ class Play extends Phaser.Scene {
 
         // xp
         this.currentXP = 0
-        this.xpNeed = 1
+        this.xpNeed = 10
 
         //levels
         this.currentLevel = 1
@@ -142,6 +142,8 @@ class Play extends Phaser.Scene {
         //block 
         this.hasBlocked = false
         this.hasBlockedNext = false
+
+        this.tutorialEnd = false
     }
 
     create(menuScene){
@@ -531,7 +533,7 @@ class Play extends Phaser.Scene {
     }
 
     update() {
-        if(this.gameEnd && Phaser.Input.Keyboard.JustDown(keyMENU)){
+        if((this.gameEnd || this.tutorialEnd) && Phaser.Input.Keyboard.JustDown(keyMENU)){
             this.scene.start('menuScene')
         }
 
@@ -820,6 +822,7 @@ class Play extends Phaser.Scene {
             })
 
             this.pressedAtk = false
+            
         }
     }
 
@@ -1020,8 +1023,6 @@ class Play extends Phaser.Scene {
                 this.spitAndHitRatTut()
             }
             
-            
-            //console.log(enemy.hp)
             if(enemy.hit == false && !enemy.spitHit){
                 enemy.hp -= this.spitDmg
                 
@@ -1051,6 +1052,10 @@ class Play extends Phaser.Scene {
             if(this.theMenuScene.tutorial && !this.hasAttackedRat && this.hasHoppedNext && this.hasAttackedNext){
                 this.attackRatTut()
                 console.log('attacked rat')
+            }
+            //TUTORIAL
+            if(this.hasSpitAndHitRatNext){
+                this.addRat()
             }
             
             this.sound.play('hitsound', {volume: 0.5})
@@ -1441,6 +1446,7 @@ class Play extends Phaser.Scene {
                 this.tutTextsPos++ //increase text array number
                 this.tutText.text = this.tutTexts[this.tutTextsPos]
                 this.hasBlockedNext = true
+                this.tutorialEnd = true
             }
         })
         this.hasBlocked = true //cant call this function again
