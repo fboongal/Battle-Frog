@@ -156,14 +156,25 @@ class Play extends Phaser.Scene {
         this.tutorialEnd = false
     }
 
-    create(menuScene){
+    create(menuScene, fromMenu){
 
         this.theMenuScene = menuScene
+        //console.log(menuScene)
         console.log(this.theMenuScene)
+        //console.log(this.theMenuScene.bgMusic)
 
         //ambient sound
         this.ambiSounds = this.sound.add('ambi', {volume: 0.5, loop: true})
         this.ambiSounds.play()
+
+        this.menuMusic = this.theMenuScene.bgMusic
+        if(!this.theMenuScene.musicPlayed){
+            this.menuMusic.play()
+            console.log(this.theMenuScene.musicPlayed)
+        }
+        else{
+            this.theMenuScene.musicPlayed = false
+        }
 
         // set up cursor keys
         cursors = this.input.keyboard.createCursorKeys()
@@ -481,6 +492,7 @@ class Play extends Phaser.Scene {
 
     update() {
         if((this.gameEnd || this.tutorialEnd) && Phaser.Input.Keyboard.JustDown(keyMENU)){
+            this.menuMusic.stop()
             this.scene.start('menuScene')
         }
 
@@ -503,7 +515,8 @@ class Play extends Phaser.Scene {
             this.dFlySpawnTimer.remove()
             this.gameTimer.remove()
             this.challengeTimer.remove()
-            this.theMenuScene.bgMusic.stop()
+            //this.theMenuScene.bgMusic.stop()
+            this.menuMusic.stop()
             this.sound.play('winsound')
             this.destroyAll.setPosition(centerX, centerY)
             this.fakeWin = true
@@ -1102,6 +1115,7 @@ class Play extends Phaser.Scene {
             enemy.knockBack(true)
             
             if(this.castleHP < 1) {
+                this.sound.play('ratlaugh')
                 this.GameOver()
             }
 
@@ -1114,13 +1128,16 @@ class Play extends Phaser.Scene {
         if(!this.scene.isActive('gameOverScene'))
             this.time.delayedCall(1000, () => { 
                 if(ratKing){
-                    this.bossMusic.destroy()
+                    //this.bossMusic.destroy()
                     //this.bgMusic = this.sound.add('music', {volume: 1, loop: true})
                     //this.bgMusic.play()
-                    this.theMenuScene.bgMusic.play()
+
+                    //this.theMenuScene.bgMusic.play()
+
+                    //this.menuMusic.play()
                 }
                 this.physics.pause()
-                this.scene.run('gameOverScene', this.timer, this.theMenuScene) 
+                this.scene.run('gameOverScene', this.timer) 
             })
 
         this.gameOver = true
@@ -1304,7 +1321,8 @@ class Play extends Phaser.Scene {
                 this.time.delayedCall(4000, () => {
                     //this.bgMusic = this.sound.add('music', {volume: 1, loop: true})
                     //this.bgMusic.play()
-                    this.theMenuScene.bgMusic.play()
+                    //this.theMenuScene.bgMusic.play()
+                    this.menuMusic.play()
                     this.credits()
                 })
                 

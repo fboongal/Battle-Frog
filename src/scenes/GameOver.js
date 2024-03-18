@@ -3,11 +3,12 @@ class GameOver extends Phaser.Scene {
         super('gameOverScene')
     }
 
-    create (score, menuScene) {
+    create (score) {
         //this.add.sprite(game.config.width/2, game.config.height/2, 'gameover').setScale(1.75)
 
         this.myscore = score
-        this.theMenuScene = menuScene
+
+        console.log(this.theMenuScene)
 
         console.log(this.myscore)
         keyMENU = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.M)
@@ -63,7 +64,6 @@ class GameOver extends Phaser.Scene {
            }
 
        if(Phaser.Input.Keyboard.JustDown(keySPACE)) {
-
             if(this.selectionOne){
                 this.scene.stop('playScene')
                 this.scene.start('playScene', this.theMenuScene)
@@ -71,7 +71,8 @@ class GameOver extends Phaser.Scene {
 
             else if(this.selectionTwo){
                 this.scene.stop('playScene')
-                this.scene.start('menuScene')
+                this.scene.stop('menuScene')
+                this.scene.start('menuScene', true)
             }
        }
     }

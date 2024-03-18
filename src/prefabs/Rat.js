@@ -34,6 +34,8 @@ class Rat extends Phaser.Physics.Arcade.Sprite {
             this.speed = velocity - 30
             this.isKing = true
         }
+
+        this.whichRat = whichRat
         
         this.hit = false     
         this.spitHit = false
@@ -119,8 +121,10 @@ class Rat extends Phaser.Physics.Arcade.Sprite {
                         //change  instead of destroy
     
                         if(!castle){
+                            console.log('hi')
                             if(this.whichRat == 0) {
                                 this.parentScene.currentXP++
+                                console.log('huh')
                             }
                             else if(this.whichRat == 1){
                                 this.parentScene.currentXP += 2

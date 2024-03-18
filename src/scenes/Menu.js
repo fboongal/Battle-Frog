@@ -66,6 +66,7 @@ class Menu extends Phaser.Scene {
         this.load.audio('screech', '/sounds/ratscreech.wav')
         this.load.audio('thunder', '/sounds/Thunder.wav')
         this.load.audio('ambi', '/sounds/ambience.wav')
+        this.load.audio('ratlaugh', '/sounds/ratlaugh.wav')
 
         // load chracter sprites
         this.load.image('dfly', '/img/Sprites/dfly.png')
@@ -99,7 +100,7 @@ class Menu extends Phaser.Scene {
         })
     }
 
-    create(){
+    create(music){
 
         // set up cursor keys
         cursors = this.input.keyboard.createCursorKeys()
@@ -116,10 +117,12 @@ class Menu extends Phaser.Scene {
         if(!this.musicPlayed){
             this.bgMusic.play()
             this.musicPlayed = true
+            console.log('music play')
         }
 
         if (this.musicPlayed && this.scene.isActive('playScene')){
             this.musicPlayed = false
+            console.log('music false')
         }
 
         // add buttons + text
