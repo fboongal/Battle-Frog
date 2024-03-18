@@ -13,7 +13,7 @@ class Play extends Phaser.Scene {
         this.frogBounce = 0.5
         this.frogProjectileSpeed = 500
         this.blocked = false
-        this.atkDmg = 10000000
+        this.atkDmg = 10000
         this.spitDmg = 100
 
         // hop points
@@ -49,7 +49,7 @@ class Play extends Phaser.Scene {
         this.spitAnim = false
         this.eating = false
 
-        // rat
+        // base rat
         this.ratSpeed = -125
         this.ratSpawnDelay = 3000
         this.ratStartSpawnDelay = 1000
@@ -85,7 +85,7 @@ class Play extends Phaser.Scene {
         this.baseKnockBackForce = 25
         this.knockBackForce = 25
 
-        //eat knock
+        //eat knock back variable
         this.eatKnock = 15
         this.eatKnocked = false
 
@@ -93,7 +93,7 @@ class Play extends Phaser.Scene {
         this.currentXP = 0
         this.xpNeed = 10
 
-        //levels
+        //frog levels
         this.currentLevel = 1
 
         //pause for power up screen
@@ -158,16 +158,15 @@ class Play extends Phaser.Scene {
 
     create(menuScene, fromMenu){
 
-        this.theMenuScene = menuScene
-        //console.log(menuScene)
-        console.log(this.theMenuScene)
-        //console.log(this.theMenuScene.bgMusic)
+        this.theMenuScene = menuScene //get menu scene reference
 
-        //ambient sound
+        //play ambient sound
         this.ambiSounds = this.sound.add('ambi', {volume: 0.5, loop: true})
         this.ambiSounds.play()
 
+        //make variable bg music
         this.menuMusic = this.theMenuScene.bgMusic
+        //play bg music if game was reset from play instead of menu
         if(!this.theMenuScene.musicPlayed){
             this.menuMusic.play()
             console.log(this.theMenuScene.musicPlayed)
@@ -178,7 +177,7 @@ class Play extends Phaser.Scene {
 
         // set up cursor keys
         cursors = this.input.keyboard.createCursorKeys()
-        
+        //set up WASD, Space, and menu keys
         keyLEFT = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A)
         keyRIGHT = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D)
         keyUP = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W)
@@ -186,16 +185,10 @@ class Play extends Phaser.Scene {
         keySPACE = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE)
         keyMENU = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.M)
 
-        //this.add.bitmapText(centerX, 500, 'TH', 'Press (W) and (S) to Hop').setScale(0.75).setDepth(40).setOrigin(0.5)
-        //this.add.bitmapText(centerX, 500, 'TH', 'Press (D) to Attack').setScale(0.75).setDepth(40).setOrigin(0.5)
-    
-        this.castleHpBar = this.add.sprite(centerX, centerY, this.castleBars[10]).setDepth(1)
-
         // background and foreground
         this.bgImage = this.add.sprite(centerX, centerY, 'bg')
         this.add.sprite(centerX, centerY, 'fg').setDepth(20)
         this.night = this.add.sprite(centerX, centerY, 'night').setAlpha(0)
-
 
         // lilypad sprite
         this.lilyPad = this.add.sprite(245, this.laneOneY+10, 'lilypad').setScale(0.9)
@@ -203,7 +196,7 @@ class Play extends Phaser.Scene {
         this.lilyPad = this.add.sprite(215, this.laneThreeY+10, 'lilypad').setScale(0.9)
         this.lilyPad = this.add.sprite(200, this.laneFourY+10, 'lilypad').setScale(0.9)
 
-        // castle sprite
+        // two castle objects to act as collisions for 'fake' caste sprite
         this.castle = this.physics.add.sprite(50, game.config.height - 175, 'castle').setScale(0.9)
         this.castle.setImmovable()
         this.castle.setSize(75, 250)
@@ -216,6 +209,9 @@ class Play extends Phaser.Scene {
         this.castleGroup = this.add.group()
         this.castleGroup.add(this.castle)
         this.castleGroup.add(this.castleTwo)
+
+        //create castle HP bar sprite
+        this.castleHpBar = this.add.sprite(centerX, centerY, this.castleBars[10]).setDepth(1)
 
         //fake castle for flash fx
         this.fakeCastle = this.add.sprite(this.game.config.width/2, this.game.config.height/2, 'fakecastle').setDepth(5)
@@ -234,19 +230,11 @@ class Play extends Phaser.Scene {
         this.ratGroup = this.add.group({
             runChildUpdate: true // make sure update runs on group children
         })
-        /*
-        this.time.delayedCall(this.ratStartSpawnDelay, () => { 
-            this.addRat()
-        })*/
 
         // set up dragonfly group
         this.dFlyGroup = this.add.group({
             runChildUpdate: true // make sure update runs on group children
         })
-        /*
-        this.time.delayedCall(this.dFlyStartSpawnDelay, () => { 
-            this.addDFly()
-        })*/
 
         //set up frog projectile group
         this.frogProjectileGroup = this.add.group({
@@ -303,7 +291,7 @@ class Play extends Phaser.Scene {
         }
 
         else{
-            console.log('tutorial')
+            //tutorial things
             this.tutTexts = ['Press (W) and (S) to Hop Up and Down the Lily Pads', 
             'Press (D) to Attack',
             'Press (D) to Attack the Rat',
@@ -332,6 +320,8 @@ class Play extends Phaser.Scene {
         this.levelText = this.add.bitmapText(860, 0, 'wTH', 'LVL: ' + this.currentLevel).setOrigin(0.5, 0).setScale(0.7)
         this.xpText = this.add.bitmapText(860, 50, 'wTH', this.currentXP + '/' + this.xpNeed).setOrigin(0.5, 0).setScale(0.7)
 
+
+        //create all the animations!
         this.anims.create({
             key: 'eat',
             frameRate: 16,
@@ -453,28 +443,27 @@ class Play extends Phaser.Scene {
             })
         })
 
+        //secret!
         this.dancingRat = this.add.sprite(centerX, centerY).setAlpha(0)
         this.dancingRat.anims.play('dance')
 
-        // eat/spit animation prototype
+        // eat/spit animations
         this.frog.on('animationcomplete', function () {
-            if(this.eatAnim) {
+            if(this.eatAnim) { //if the player is eating...
                 this.eat.setPosition(this.frog.x + 150, this.frog.y +10).setActive(true)
                 this.time.delayedCall(100, () => { // wait 1 tenth of a second
                     this.eat.setPosition(-300, 0) // remove sprite from canvas until called again
                     if(this.dFlyEaten){
                         this.frog.anims.play('eaten')
-                        //this.canHop = true // testing to see locked in place
                     }
                     else{
                         this.frog.anims.play('idle')
-                        //this.canHop = true // testing to see locked in place
                     }
 
                     this.eating = false
                 })
             }
-            else if(this.spitAnim){
+            else if(this.spitAnim){ // if the player is spitting...
                 this.addFrogProjectile()
                 this.time.delayedCall(50, () => { // wait 1 tenth of a second
                     this.frog.anims.play('idle')
@@ -483,7 +472,7 @@ class Play extends Phaser.Scene {
             }
         }, this)
 
-        // rain sound + tilesprite
+        // rain sound + tilesprite set up
         this.rain = this.add.tileSprite(0, 0, 960, 600,
         'rain').setOrigin(0,0).setDepth(18).setAlpha(0)
 
@@ -491,101 +480,104 @@ class Play extends Phaser.Scene {
     }
 
     update() {
+        //return to menu by pressing M if the game is over or the tutorial is over
         if((this.gameEnd || this.tutorialEnd) && Phaser.Input.Keyboard.JustDown(keyMENU)){
             this.menuMusic.stop()
             this.scene.start('menuScene')
         }
-
+        //tutorial code
         this.hopTut()
 
+        // if this isn't the tutorial...
         if(!this.theMenuScene.tutorial){
-        //enemy spawn timers
-        if(this.timer == 30 && !this.spawnElites){
-            this.eliteCanSpawn = true
-            this.spawnElites = true
-        }
+            //set up enemy spawn timers
+            if(this.timer == 30 && !this.spawnElites){ // after 30 seconds begin to spawn elites
+                this.eliteCanSpawn = true
+                this.spawnElites = true
+            }
 
-        if(this.timer == 90 && !this.spawnPurples){
-            this.purpleCanSpawn = true
-            this.spawnPurples = true
-        }
+            if(this.timer == 90 && !this.spawnPurples){ // after 90 seconds begin to spawn purples
+                this.purpleCanSpawn = true
+                this.spawnPurples = true
+            }
 
-        if(this.timer == 5 && !this.fakeWin){
-            this.ratSpawnTimer.remove()
-            this.dFlySpawnTimer.remove()
-            this.gameTimer.remove()
-            this.challengeTimer.remove()
-            //this.theMenuScene.bgMusic.stop()
-            this.menuMusic.stop()
-            this.sound.play('winsound')
-            this.destroyAll.setPosition(centerX, centerY)
-            this.fakeWin = true
+            if(this.timer == 180 && !this.fakeWin){ // after 180 seconds spawn begin boss sequence
+                // remove spawn timers
+                this.ratSpawnTimer.remove()
+                this.dFlySpawnTimer.remove()
+                this.gameTimer.remove()
+                this.challengeTimer.remove()
 
-            this.time.delayedCall(4000, () => {
-                this.destroyAll.setPosition(-3000, -3000)
+                this.menuMusic.stop()
+                this.sound.play('hitsound')
+                this.sound.play('winsound')
+                this.destroyAll.setPosition(centerX, centerY) // destroy all remaining rats
+                this.fakeWin = true
+
+                // after 4 seconds, thunder strikes, boss music begins
                 this.time.delayedCall(4000, () => {
-                    this.bossMusic = this.sound.add('bossmusic', {volume: 1, loop: true})
-                    this.bossMusic.play()
-                })
-                this.ThunderWhiteOut()
-            })
-
-            this.time.delayedCall(10000, () => {
-                this.kingCanSpawn = true
-                this.ratKing = new Rat(this, this.ratSpeed, this.ratPos.y, this.laneY, 3).setOrigin(0.5, 1)
-                this.ratKing.anims.play('ratkingrun').setSize(200,160)
-                this.ratGroup.add(this.ratKing)
-                this.ratKing.setDepth(2 + this.laneDepthMod)
-
-                // spawn enemies every X seconds
-                this.ratSpawnTimer = this.time.addEvent({
-                    delay: this.ratSpawnDelay,
-                    callback: this.addRat,
-                    callbackScope: this,
-                    loop: true
+                    this.destroyAll.setPosition(-3000, -3000)
+                    this.time.delayedCall(4000, () => {
+                        this.bossMusic = this.sound.add('bossmusic', {volume: 1, loop: true})
+                        this.bossMusic.play()
+                    })
+                    this.ThunderWhiteOut()
                 })
 
-                // spawn dFlys every 5 seconds
-                this.dFlySpawnTimer = this.time.addEvent({
-                    delay: this.dFlySpawnDelay,
-                    callback: this.addDFly,
-                    callbackScope: this,
-                    loop: true
-                })
+                //spawn in the rat king after 10 seconds
+                this.time.delayedCall(10000, () => {
+                    this.kingCanSpawn = true
+                    this.ratKing = new Rat(this, this.ratSpeed, 420, 420, 3).setOrigin(0.5, 1)
+                    this.ratKing.anims.play('ratkingrun').setSize(200,160)
+                    this.ratGroup.add(this.ratKing)
+                    this.ratKing.setDepth(2 + this.laneDepthMod)
 
-                // ingame timer
-                this.gameTimer = this.time.addEvent({
-                    delay: 1000,
-                    callback: this.addTime,
-                    callbackScope: this,
-                    loop: true
+                    // resume the enemy spawners!
+                    this.ratSpawnTimer = this.time.addEvent({
+                        delay: this.ratSpawnDelay,
+                        callback: this.addRat,
+                        callbackScope: this,
+                        loop: true
+                    })
+
+                    // spawn dFlys every x seconds
+                    this.dFlySpawnTimer = this.time.addEvent({
+                        delay: this.dFlySpawnDelay,
+                        callback: this.addDFly,
+                        callbackScope: this,
+                        loop: true
+                    })
+
+                    // ingame timer
+                    this.gameTimer = this.time.addEvent({
+                        delay: 1000,
+                        callback: this.addTime,
+                        callbackScope: this,
+                        loop: true
+                    })
                 })
-            })
+            }
         }
-                }
         
-
+        // if neither in the power up screen or is game over...
         if(!this.powerUpScreen && !this.gameOver){
 
             //make rain fall
             this.rain.tilePositionY -= 7
 
-            // new hop input
+            // hop input
             if(Phaser.Input.Keyboard.JustDown(cursors.down) || Phaser.Input.Keyboard.JustDown(keyDOWN)) {
                 
-                //tutorial 
+                //tutorial stuff
                 if(this.theMenuScene.tutorial && !this.hasHoppedNext){
                     this.hasHoppedDown = true
                 }
 
                 this.keyDownCode()
-                
-                //temp
-                //this.ThunderWhiteOut()
             }
 
             else if(Phaser.Input.Keyboard.JustDown(cursors.up) || Phaser.Input.Keyboard.JustDown(keyUP)) {
-                //tutorial
+                //tutorial stuff
                 if(this.theMenuScene.tutorial && !this.hasHoppedNext){
                     this.hasHoppedUp = true
                 }
@@ -598,10 +590,9 @@ class Play extends Phaser.Scene {
                 if(this.theMenuScene.tutorial && !this.hasAttacked && this.hasHoppedNext){ // if this is tutorial and hasn't pressed attack yet and has done hopping tutorial...
                     this.attackTut()
                 }
-                //TUTORIAL STUFF END
                 
                 this.pressedAtk = true
-                this.inputBufferTimeAtk = this.time.delayedCall(200, () => { 
+                this.inputBufferTimeAtk = this.time.delayedCall(200, () => { // input is still true 200 miliseconds
                     this.pressedAtk = false
                 })
             }
@@ -634,11 +625,11 @@ class Play extends Phaser.Scene {
             this.xpCode() // runs xp code
             }
 
-        else if(this.powerUpScreen) {
+        else if(this.powerUpScreen) { // if in power up screen...
 
                 // Highlight upgrade UI
                 if(this.selectionOne){
-                    this.skillThreeUI.setAlpha(0)
+                    this.skillThreeUI.setAlpha(0) // set non selected alphas to zero, seleted alpha to one
                     this.skillTwoUI.setAlpha(0)
                     this.skillOneUI.setAlpha(1)
 
@@ -705,7 +696,7 @@ class Play extends Phaser.Scene {
                 }
             }
 
-            if(Phaser.Input.Keyboard.JustDown(keySPACE)) {
+            if(Phaser.Input.Keyboard.JustDown(keySPACE)) { // on space press...
                 if(this.selectionOne){
                     this.increaseAttackRange()
                 }
@@ -728,7 +719,8 @@ class Play extends Phaser.Scene {
                     this.upgTextUI[i].destroy()
                 } 
 
-                this.powerUpScreen = false
+                // resume game
+                this.powerUpScreen = false 
                 this.physics.resume()
             }
         }  
@@ -748,7 +740,7 @@ class Play extends Phaser.Scene {
         this.pressedUp = false
         this.pressedDown = true
 
-        this.inputBufferTimeDown = this.time.delayedCall(125, () => { 
+        this.inputBufferTimeDown = this.time.delayedCall(125, () => {  // input buffer for hopping
             this.pressedDown = false
         })
     }
@@ -764,21 +756,21 @@ class Play extends Phaser.Scene {
 
     hoppingCode() {
         // DOWN
-        // if above the bottom lane, is on a hop point (can hop) and has pressed down in the last .1 seconds...
+        // if above the bottom lane, is on a hop point (can hop) and has pressed down in the last .125 seconds...
         if(this.frog.y < 475 && this.canHop && this.pressedDown && !this.eating) {
             this.hopPoint.x = this.frog.x - 15
             this.hopPoint.y = this.frog.y + 100
-            this.physics.moveToObject(this.frog, this.hopPoint, this.frogVelocity)
+            this.physics.moveToObject(this.frog, this.hopPoint, this.frogVelocity)// move frog towards next lily pad
             this.canHop = false
             this.frog.anims.play('hop')
             this.sound.play('hopsound')
         }
         // UP
-        // if below the top lane, is on a hop point (can hop) and has pressed down in the last .1 seconds...
+        // if below the top lane, is on a hop point (can hop) and has pressed down in the last .125 seconds...
         if(this.frog.y > 200 && this.canHop && this.pressedUp && !this.eating) {
             this.hopPoint.x = this.frog.x + 15
             this.hopPoint.y = this.frog.y - 100
-            this.physics.moveToObject(this.frog, this.hopPoint, this.frogVelocity)
+            this.physics.moveToObject(this.frog, this.hopPoint, this.frogVelocity) // move frog towards next lily pad
             this.canHop = false
             this.frog.anims.play('hop')
             this.sound.play('hopsound')
@@ -792,7 +784,7 @@ class Play extends Phaser.Scene {
         if (this.frog.body.speed > 0)
         {
   
-            if (distance < tolerance)
+            if (distance < tolerance) // if frog has reached lily pad posiiton...
             {
                 // reset anims
                 if(!this.dFlyEaten && !this.blocked){
@@ -807,8 +799,8 @@ class Play extends Phaser.Scene {
 
                 this.eating = false //when you hop before completing eat anim, set to eating to false
 
-                this.frog.body.reset(this.hopPoint.x, this.hopPoint.y)
-                this.waitAfterHopTime = this.time.delayedCall(75, () => { 
+                this.frog.body.reset(this.hopPoint.x, this.hopPoint.y) // reset movement to make frog stop at this point
+                this.waitAfterHopTime = this.time.delayedCall(75, () => { //wait briefly after landing before allowing to hop again
                     this.canHop = true
                 })
             }
@@ -818,7 +810,6 @@ class Play extends Phaser.Scene {
     attackCode(){
         // attack code
         if(this.canHop && this.pressedAtk && !this.attacking && !this.eating) {
-            //console.log('attacked')
             this.attacking = true
             this.attack.setPosition(this.frog.x + this.attackOffSet, this.frog.y).setActive(true)
             if(!this.dFlyEaten){
@@ -868,7 +859,7 @@ class Play extends Phaser.Scene {
             this.eatAnim = false
             this.spitAnim = true
             this.frog.anims.play('eat')
-            this.sound.play('spitsound', {volume: 1.75})
+            this.sound.play('spitsound', {volume: 2})
             this.dFlyEaten = false
             this.pressedEat = false
         }
@@ -956,11 +947,16 @@ class Play extends Phaser.Scene {
                 this.blockTut()
             }
 
+            
             this.blocked = true
             this.frog.anims.play('block')
             this.knockBackForce = this.baseKnockBackForce * 3
             if(rat.isKing){
-                this.knockBackForce = this.baseKnockBackForce * 15
+                this.knockBackForce = this.baseKnockBackForce * 17
+                this.sound.play('kingblock', {volume: 1.75})
+            }
+            else {
+                this.sound.play('blocksound', {volume: 1.75})
             }
             this.knockBack(rat)
 
@@ -1128,7 +1124,8 @@ class Play extends Phaser.Scene {
         if(!this.scene.isActive('gameOverScene'))
             this.time.delayedCall(1000, () => { 
                 if(ratKing){
-                    //this.bossMusic.destroy()
+                    this.bossMusic.stop()
+                    this.bossMusic.destroy()
                     //this.bgMusic = this.sound.add('music', {volume: 1, loop: true})
                     //this.bgMusic.play()
 
@@ -1305,10 +1302,22 @@ class Play extends Phaser.Scene {
         })
 
         this.time.delayedCall(2000, () => {
-            this.sound.play('screech', {volume: 0.5})
+            this.sound.play('screech', {volume: 0.4})//screch soung
+            this.whiteOut.setAlpha(0)
+            this.tweens.addCounter({
+                from: 0,
+                to: 1,
+                duration: 3000,
+                onUpdate: tween =>
+                    {
+                    const val = tween.getValue()
+                    this.whiteOut.setAlpha(val) 
+                    }
+                }
+            )
         })
 
-        this.time.delayedCall(4500, () => {
+        this.time.delayedCall(4500, () => { 
             this.ratKing.setTintFill(0xffffff)
             this.time.delayedCall(75, () => {
                 this.sound.play('hitsound', {volume: 0.5})
@@ -1316,12 +1325,23 @@ class Play extends Phaser.Scene {
                 
                 this.time.delayedCall(1000, () => {
                     this.sound.play('winsound')
+                    this.rainLoop.stop()
+                    this.rain.setAlpha(0)
+                    this.night.setAlpha(0)
+                    this.tweens.addCounter({
+                        from: 1,
+                        to: 0,
+                        duration: 1000,
+                        onUpdate: tween =>
+                            {
+                            const val = tween.getValue()
+                            this.whiteOut.setAlpha(val) 
+                            }
+                        }
+                    )
                 })
 
                 this.time.delayedCall(4000, () => {
-                    //this.bgMusic = this.sound.add('music', {volume: 1, loop: true})
-                    //this.bgMusic.play()
-                    //this.theMenuScene.bgMusic.play()
                     this.menuMusic.play()
                     this.credits()
                 })
@@ -1364,7 +1384,7 @@ class Play extends Phaser.Scene {
         devCredits.body.setVelocityX(-150)
         let menuText = this.add.bitmapText(1600, centerY, 'wTH', 'Press (M) to go to Menu').setScale(1.25).setDepth(4).setOrigin(0.42, 0.5)
 
-        this.time.delayedCall(35000, () => {
+        this.time.delayedCall(36000, () => {
             this.tweens.add({
                 targets: menuText,
                 x: centerX,
@@ -1390,7 +1410,7 @@ class Play extends Phaser.Scene {
         })
 
         this.time.delayedCall(150, () => {
-            this.whiteOut.setTintFill(0xffffff)
+            //this.whiteOut.setTintFill(0xffffff)
             this.whiteOut.setAlpha(1)
         })
 
@@ -1407,7 +1427,7 @@ class Play extends Phaser.Scene {
             this.rainLoop.loop = true
             this.rainLoop.play()
             this.rain.setAlpha(1)
-            this.dancingRat.setAlpha(1)
+            //this.dancingRat.setAlpha(1)
             this.night.setAlpha(0.15).setDepth(50)
             this.tweens.addCounter({
                 from: 1,
@@ -1417,7 +1437,7 @@ class Play extends Phaser.Scene {
                 {
                     const value = tween.getValue()
                     this.whiteOut.setAlpha(value)
-                    this.dancingRat.setAlpha(value)
+                    //this.dancingRat.setAlpha(value)
                 }
             })
             this.whiteOut.setAlpha(0)

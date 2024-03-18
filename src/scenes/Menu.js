@@ -67,6 +67,8 @@ class Menu extends Phaser.Scene {
         this.load.audio('thunder', '/sounds/Thunder.wav')
         this.load.audio('ambi', '/sounds/ambience.wav')
         this.load.audio('ratlaugh', '/sounds/ratlaugh.wav')
+        this.load.audio('blocksound', '/sounds/blocksound.wav')
+        this.load.audio('kingblock', '/sounds/kingblock.wav')
 
         // load chracter sprites
         this.load.image('dfly', '/img/Sprites/dfly.png')

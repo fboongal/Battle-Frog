@@ -9,7 +9,7 @@ class Rat extends Phaser.Physics.Arcade.Sprite {
 
         this.isKing = false
 
-        this.ratSpeedOffset = Phaser.Math.Between(-15, 15)
+        this.ratSpeedOffset = Phaser.Math.Between(-10, 10)
 
         this.isGettingDestroyed = false
 
@@ -31,7 +31,7 @@ class Rat extends Phaser.Physics.Arcade.Sprite {
         else if(whichRat == 3){
             this.hp = 15000
             //this.setTexture('purpleratrun')
-            this.speed = velocity - 30
+            this.speed = velocity - 20
             this.isKing = true
         }
 
