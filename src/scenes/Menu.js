@@ -6,24 +6,16 @@ class Menu extends Phaser.Scene {
     preload(){
         this.load.path = './assets/'
 
-        this.load.image('castle', '/img/castlebasic.png')
-        this.load.image('tongue', '/img/FrogTongue.png')
-        this.load.image('bg', '/img/BGImage.png')
-        this.load.image('fg', '/img/FG.png')
-        this.load.image('atk', '/img/atk.png')
-        this.load.image('lilypad', '/img/LilyPadNew.png')
-        this.load.image('rat', '/img/rat.png')
-        this.load.image('dfly', '/img/dfly.png')
-        this.load.image('helmet', '/img/helmet.png')
-        this.load.image('rain', '/img/rain.png')
-        this.load.image('button', '/img/button.png')
-        this.load.image('hbutton', '/img/highlighted button.png')
-        this.load.image('title', '/img/title.png')
-        this.load.image('fakecastle', '/img/Castle.png')
-        this.load.image('guide', '/img/Guide.png')
-        this.load.image('night', '/img/NightAlpha.png')
+        // load play/in-game scene assets
+        this.load.image('castle', '/img/Scene/castlebasic.png')
+        this.load.image('bg', '/img/Scene/BGImage.png')
+        this.load.image('fg', '/img/Scene/FG.png')
+        this.load.image('lilypad', '/img/Scene/LilyPadNew.png')
+        this.load.image('rain', '/img/Scene/rain.png')
+        this.load.image('fakecastle', '/img/Scene/Castle.png')
+        this.load.image('night', '/img/Scene/NightAlpha.png')
 
-        // load HP UI        
+        // load HP Bar UI        
         this.load.image('0HP', '/img/HP/test.png') 
         this.load.image('1HP', '/img/HP/1.png') 
         this.load.image('2HP', '/img/HP/2.png') 
@@ -36,15 +28,16 @@ class Menu extends Phaser.Scene {
         this.load.image('9HP', '/img/HP/9.png') 
         this.load.image('10HP', '/img/HP/10.png')
 
-        
         // load upgrade UI
-        this.load.image('upgradeUI', '/img/Upgrade_UI.png')
-        /*this.load.image('lUpgUI', '/img/LeftUPGUI.png')
-        this.load.image('mUpgUI', '/img/MidUPGUI.png')
-        this.load.image('rUpgUI', '/img/RightUPGUI.png')*/
-        this.load.image('tSelect', '/img/topSelect.png')
-        this.load.image('mSelect', '/img/midSelect.png')
-        this.load.image('bSelect', '/img/botSelect.png')
+        this.load.image('upgradeUI', '/img/UI/Upgrade_UI.png')
+        this.load.image('tSelect', '/img/UI/topSelect.png')
+        this.load.image('mSelect', '/img/UI/midSelect.png')
+        this.load.image('bSelect', '/img/UI/botSelect.png')
+
+        // load title UI
+        this.load.image('button', '/img/UI/button.png')
+        this.load.image('hbutton', '/img/UI/highlighted button.png')
+        this.load.image('title', '/img/UI/title.png')
 
         // load bitmap font
         this.load.bitmapFont('BC', 'font/BC.png', 'font/BC.xml') // Black Castle found from https://www.dafont.com/black-castle.font by Richard William Mueller
@@ -67,49 +60,33 @@ class Menu extends Phaser.Scene {
         this.load.audio('thunder', '/sounds/Thunder.wav')
         this.load.audio('ambi', '/sounds/ambience.wav')
 
-        this.load.spritesheet('frogeat', 'img/FrogSheet.png', {
+        // load chracter sprites
+        this.load.image('dfly', '/img/Sprites/dfly.png')
+        this.load.image('tongue', '/img/Sprites/FrogTongue.png')
+        this.load.image('atk', '/img/Sprites/atk.png')
+        this.load.image('helmet', '/img/Sprites/helmet.png')
+
+        this.load.spritesheet('frogeat', 'img/Sprites/FrogSheet.png', {
             frameWidth: 128,
             frameHeight: 128
         })
-
-        this.load.spritesheet('ratrun', 'img/ratrun.png', {
+        this.load.spritesheet('ratrun', 'img/Sprites/ratrun.png', {
             frameWidth: 256,
             frameHeight: 128
         })
-
-        this.load.spritesheet('eliteratrun', 'img/eliteratrun.png', {
+        this.load.spritesheet('eliteratrun', 'img/Sprites/eliteratrun.png', {
             frameWidth: 256,
             frameHeight: 128
         })
-
-        this.load.spritesheet('purplerat', 'img/PurpleRat.png', {
+        this.load.spritesheet('purplerat', 'img/Sprites/PurpleRat.png', {
             frameWidth: 256,
             frameHeight: 128
         })
-
-        this.load.spritesheet('ratking', 'img/RatKing.png', {
+        this.load.spritesheet('ratking', 'img/Sprites/RatKing.png', {
             frameWidth: 240,
             frameHeight: 220
         })
-
-        //guide
-
-        this.load.spritesheet('attack', 'img/FrogAttack.png', {
-            frameWidth: 128,
-            frameHeight: 128
-        })
-
-        this.load.spritesheet('block', 'img/FrogBlock.png', {
-            frameWidth: 128,
-            frameHeight: 128
-        })
-
-        this.load.spritesheet('eat', 'img/FrogGuideEat.png', {
-            frameWidth: 128,
-            frameHeight: 128
-        })
-
-        this.load.spritesheet('dancerat', 'img/ratdance.png', {
+        this.load.spritesheet('dancerat', 'img/Sprites/ratdance.png', {
             frameWidth: 210,
             frameHeight: 374
         })
