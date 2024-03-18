@@ -119,7 +119,16 @@ class Rat extends Phaser.Physics.Arcade.Sprite {
                         //change  instead of destroy
     
                         if(!castle){
-                            this.parentScene.currentXP++
+                            if(this.whichRat == 0) {
+                                this.parentScene.currentXP++
+                            }
+                            else if(this.whichRat == 1){
+                                this.parentScene.currentXP += 2
+                            }
+                            else if(this.whichRat == 2){
+                                this.parentScene.currentXP += 3
+                            }
+
                             this.parentScene.xpText.text = this.parentScene.currentXP + '/' + this.parentScene.xpNeed
                         }
     
@@ -137,12 +146,16 @@ class Rat extends Phaser.Physics.Arcade.Sprite {
                         }
     
     
-                        if(this.isKing){
+                        if(this.isKing && !castle){
                             this.setVelocityX(0)
                             this.gameOver = true
                             this.parentScene.destroyAll.setPosition(centerX, centerY)
                             this.parentScene.theKingHasFallen()
-                            
+                        }
+                        else if (this.isKing && castle) {
+                            this.setVelocityX(0)
+                            this.parentScene.GameOver(true)
+                            console.log('game over')
                         }
                     }
                     

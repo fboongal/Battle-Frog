@@ -504,7 +504,6 @@ class Play extends Phaser.Scene {
             this.gameTimer.remove()
             this.challengeTimer.remove()
             this.theMenuScene.bgMusic.stop()
-            this.theMenuScene.bgMusic.destroy()
             this.sound.play('winsound')
             this.destroyAll.setPosition(centerX, centerY)
             this.fakeWin = true
@@ -1102,18 +1101,29 @@ class Play extends Phaser.Scene {
     
             enemy.knockBack(true)
             
-            if(this.castleHP < 1 && !this.scene.isActive('gameOverScene')) {
-                this.time.delayedCall(1000, () => { 
-                    this.physics.pause()
-                    this.scene.run('gameOverScene', this.timer, this.theMenuScene) 
-                })
-
-                this.gameOver = true
+            if(this.castleHP < 1) {
+                this.GameOver()
             }
 
             this.castleFlash()
         }
 
+    }
+
+    GameOver(ratKing){
+        if(!this.scene.isActive('gameOverScene'))
+            this.time.delayedCall(1000, () => { 
+                if(ratKing){
+                    this.bossMusic.destroy()
+                    //this.bgMusic = this.sound.add('music', {volume: 1, loop: true})
+                    //this.bgMusic.play()
+                    this.theMenuScene.bgMusic.play()
+                }
+                this.physics.pause()
+                this.scene.run('gameOverScene', this.timer, this.theMenuScene) 
+            })
+
+        this.gameOver = true
     }
 
     enemyFlash(enemy) {
@@ -1148,7 +1158,7 @@ class Play extends Phaser.Scene {
     }
 
     addTime() {
-        if(this.castleHP > 0 && !this.powerUpScreen && !this.gameOver){ //
+        if(this.castleHP > 0 && !this.powerUpScreen && !this.gameOver){
             this.timer++
             this.timerText.text = this.timer
             //console.log(this.timer)
@@ -1193,9 +1203,9 @@ class Play extends Phaser.Scene {
             this.currentLevel++
             this.levelText.text = 'LVL: ' + this.currentLevel
             this.currentXP = 0
-            this.updateXP()
             this.xpNeed *= 1.5
             this.xpNeed = Math.ceil(this.xpNeed)
+            this.updateXP()
             this.skillScreen()
             
         }
@@ -1292,8 +1302,9 @@ class Play extends Phaser.Scene {
                 })
 
                 this.time.delayedCall(4000, () => {
-                    this.bgMusic = this.sound.add('music', {volume: 1, loop: true})
-                    this.bgMusic.play()
+                    //this.bgMusic = this.sound.add('music', {volume: 1, loop: true})
+                    //this.bgMusic.play()
+                    this.theMenuScene.bgMusic.play()
                     this.credits()
                 })
                 
