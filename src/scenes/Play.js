@@ -78,7 +78,7 @@ class Play extends Phaser.Scene {
         this.dFlyEaten = false
 
         // castle
-        this.castleHP = 1
+        this.castleHP = 10
         this.castleBars = ['0HP','1HP','2HP','3HP','4HP','5HP','6HP','7HP','8HP','9HP','10HP']
 
         //knock back variable
@@ -91,7 +91,7 @@ class Play extends Phaser.Scene {
 
         // xp
         this.currentXP = 0
-        this.xpNeed = 1
+        this.xpNeed = 10
 
         //levels
         this.currentLevel = 1
@@ -144,7 +144,7 @@ class Play extends Phaser.Scene {
         this.hasEaten = false
         this.hasEatenNext = false
         //eat bug
-        this.hasEatenBug
+        this.hasEatenBug = false
         this.hasEatenBugNext = false
         //spit out and hit rat with bug
         this.hasSpitAndHitRat = false
@@ -159,6 +159,7 @@ class Play extends Phaser.Scene {
     create(menuScene){
 
         this.theMenuScene = menuScene
+        console.log(this.theMenuScene)
 
         //ambient sound
         this.ambiSounds = this.sound.add('ambi', {volume: 0.5, loop: true})
@@ -273,72 +274,6 @@ class Play extends Phaser.Scene {
                 loop: true
             })
 
-            /*
-            // dev mode start here
-            this.time.delayedCall(30000, () => { // after 15 seconds elite enemies can spawn
-                this.eliteCanSpawn = true
-                console.log('elite can spawn')
-            })
-
-            this.time.delayedCall(90000, () => { // after 60 seconds purple enemies can spawn
-                this.purpleCanSpawn = true
-                //console.log('purple can spawn')
-            })
-
-            this.time.delayedCall(180000, () => { // fake win
-                this.ratSpawnTimer.remove()
-                this.dFlySpawnTimer.remove()
-                this.gameTimer.remove()
-                this.challengeTimer.remove()
-
-                menuScene.bgMusic.destroy()
-                this.sound.play('winsound')
-                this.destroyAll.setPosition(centerX, centerY)
-            })
-
-            this.time.delayedCall(184000, () => { //thunder
-                this.destroyAll.setPosition(-3000, -3000)
-                //where boss music used to start
-                this.time.delayedCall(4000, () => {
-                    this.bossMusic = this.sound.add('bossmusic', {volume: 1, loop: true})
-                    this.bossMusic.play()
-                })
-                this.ThunderWhiteOut()
-            })
-
-            this.time.delayedCall(190000, () => { // spawn rat king
-                this.kingCanSpawn = true
-                this.ratKing = new Rat(this, this.ratSpeed, this.ratPos.y, this.laneY, 3).setOrigin(0.5, 1)
-                this.ratKing.anims.play('ratkingrun').setSize(200,160)
-                this.ratGroup.add(this.ratKing)
-                this.ratKing.setDepth(2 + this.laneDepthMod)
-                console.log('king can spawn')
-
-                // spawn enemies every X seconds
-                this.ratSpawnTimer = this.time.addEvent({
-                    delay: this.ratSpawnDelay,
-                    callback: this.addRat,
-                    callbackScope: this,
-                    loop: true
-                })
-
-                // spawn dFlys every 5 seconds
-                this.dFlySpawnTimer = this.time.addEvent({
-                    delay: this.dFlySpawnDelay,
-                    callback: this.addDFly,
-                    callbackScope: this,
-                    loop: true
-                })
-
-                // ingame timer
-                this.gameTimer = this.time.addEvent({
-                    delay: 1000,
-                    callback: this.addTime,
-                    callbackScope: this,
-                    loop: true
-                })
-            })*/
-
             // spawn enemies every X seconds
             this.ratSpawnTimer = this.time.addEvent({
                 delay: this.ratSpawnDelay,
@@ -354,14 +289,6 @@ class Play extends Phaser.Scene {
                 callbackScope: this,
                 loop: true
             })
-
-            // ingame timer
-            this.gameTimer = this.time.addEvent({
-                delay: 1000,
-                callback: this.addTime,
-                callbackScope: this,
-                loop: true
-            })
         }
 
         else{
@@ -374,11 +301,19 @@ class Play extends Phaser.Scene {
             'Press (A) Again to Spit Out the Bug and Hit the Rat',
             'Let a Rat Run Into You to Block them, Knocking Them Back',
             'Tutorial Complete! Press (M) to go to Menu'
-        ]
+            ]
             this.tutTextsPos = 0
-            this.tutText = this.add.bitmapText(centerX, 500, 'wTH', this.tutTexts[this.tutTextsPos] ).setOrigin(0.5, 0.5).setScale(0.5)
+            this.tutText = this.add.bitmapText(centerX, 530, 'wTH', this.tutTexts[this.tutTextsPos] ).setOrigin(0.5, 0.5).setScale(0.6).setDepth(50)
             
         }
+
+        // ingame timer
+        this.gameTimer = this.time.addEvent({
+            delay: 1000,
+            callback: this.addTime,
+            callbackScope: this,
+            loop: true
+        })
 
         // in game play UI (timer, level, & xp)
         this.xpNeed = Math.floor(this.xpNeed)
@@ -551,68 +486,71 @@ class Play extends Phaser.Scene {
 
         this.hopTut()
 
-        //enemy spawn timers
-        if(this.timer == 30 && !this.spawnElites){
-            this.eliteCanSpawn = true
-            this.spawnElites = true
+        if(!this.theMenuScene.tutorial){
+//enemy spawn timers
+if(this.timer == 30 && !this.spawnElites){
+    this.eliteCanSpawn = true
+    this.spawnElites = true
+}
+
+if(this.timer == 90 && !this.spawnPurples){
+    this.purpleCanSpawn = true
+    this.spawnPurples = true
+}
+
+if(this.timer == 180 && !this.fakeWin){
+    this.ratSpawnTimer.remove()
+    this.dFlySpawnTimer.remove()
+    this.gameTimer.remove()
+    this.challengeTimer.remove()
+    this.theMenuScene.bgMusic.destroy()
+    this.sound.play('winsound')
+    this.destroyAll.setPosition(centerX, centerY)
+    this.fakeWin = true
+
+    this.time.delayedCall(4000, () => {
+        this.destroyAll.setPosition(-3000, -3000)
+        this.time.delayedCall(4000, () => {
+            this.bossMusic = this.sound.add('bossmusic', {volume: 1, loop: true})
+            this.bossMusic.play()
+        })
+        this.ThunderWhiteOut()
+    })
+
+    this.time.delayedCall(10000, () => {
+        this.kingCanSpawn = true
+        this.ratKing = new Rat(this, this.ratSpeed, this.ratPos.y, this.laneY, 3).setOrigin(0.5, 1)
+        this.ratKing.anims.play('ratkingrun').setSize(200,160)
+        this.ratGroup.add(this.ratKing)
+        this.ratKing.setDepth(2 + this.laneDepthMod)
+
+        // spawn enemies every X seconds
+        this.ratSpawnTimer = this.time.addEvent({
+            delay: this.ratSpawnDelay,
+            callback: this.addRat,
+            callbackScope: this,
+            loop: true
+        })
+
+        // spawn dFlys every 5 seconds
+        this.dFlySpawnTimer = this.time.addEvent({
+            delay: this.dFlySpawnDelay,
+            callback: this.addDFly,
+            callbackScope: this,
+            loop: true
+        })
+
+        // ingame timer
+        this.gameTimer = this.time.addEvent({
+            delay: 1000,
+            callback: this.addTime,
+            callbackScope: this,
+            loop: true
+        })
+    })
+}
         }
-
-        if(this.timer == 90 && !this.spawnPurples){
-            this.purpleCanSpawn = true
-            this.spawnPurples = true
-        }
-
-        if(this.timer == 180 && !this.fakeWin){
-            this.ratSpawnTimer.remove()
-            this.dFlySpawnTimer.remove()
-            this.gameTimer.remove()
-            this.challengeTimer.remove()
-            this.theMenuScene.bgMusic.destroy()
-            this.sound.play('winsound')
-            this.destroyAll.setPosition(centerX, centerY)
-            this.fakeWin = true
-
-            this.time.delayedCall(4000, () => {
-                this.destroyAll.setPosition(-3000, -3000)
-                this.time.delayedCall(4000, () => {
-                    this.bossMusic = this.sound.add('bossmusic', {volume: 1, loop: true})
-                    this.bossMusic.play()
-                })
-                this.ThunderWhiteOut()
-            })
-
-            this.time.delayedCall(10000, () => {
-                this.kingCanSpawn = true
-                this.ratKing = new Rat(this, this.ratSpeed, this.ratPos.y, this.laneY, 3).setOrigin(0.5, 1)
-                this.ratKing.anims.play('ratkingrun').setSize(200,160)
-                this.ratGroup.add(this.ratKing)
-                this.ratKing.setDepth(2 + this.laneDepthMod)
-    
-                // spawn enemies every X seconds
-                this.ratSpawnTimer = this.time.addEvent({
-                    delay: this.ratSpawnDelay,
-                    callback: this.addRat,
-                    callbackScope: this,
-                    loop: true
-                })
-    
-                // spawn dFlys every 5 seconds
-                this.dFlySpawnTimer = this.time.addEvent({
-                    delay: this.dFlySpawnDelay,
-                    callback: this.addDFly,
-                    callbackScope: this,
-                    loop: true
-                })
-    
-                // ingame timer
-                this.gameTimer = this.time.addEvent({
-                    delay: 1000,
-                    callback: this.addTime,
-                    callbackScope: this,
-                    loop: true
-                })
-            })
-        }
+        
 
         if(!this.powerUpScreen && !this.gameOver){
 
@@ -1060,14 +998,22 @@ class Play extends Phaser.Scene {
         this.frogProjectileGroup.add(this.frogProjectile)
     }
 
-    dFlyCollision(frog, DFly) {}
+    dFlyCollision(frog, DFly) {
+
+    }
 
     eatDFlyCollision(eat, dFly) {
         if(!this.dFlyEaten){
-
+            console.log('eat fly coll')
             //TUTORIAL STUFF
+            console.log(this.hasEatenBug)
+            console.log(this.hasHoppedNext)
+            console.log(this.hasAttackedNext)
+            console.log(this.hasAttackedRatNext)
+            console.log(this.hasEatenNext)
             if(this.theMenuScene.tutorial && !this.hasEatenBug && this.hasHoppedNext && this.hasAttackedNext && this.hasAttackedRatNext && this.hasEatenNext){
                 this.eatBugTut()
+                console.log('eatBugTut done')
             }
 
             this.dFlyEaten = true
@@ -1128,7 +1074,7 @@ class Play extends Phaser.Scene {
                 this.attackRatTut()
             }
             //TUTORIAL
-            if(this.hasSpitAndHitRatNext){
+            if(this.hasSpitAndHitRatNext || this.hasEatenBug){
                 this.addRat()
             }
             
@@ -1158,7 +1104,7 @@ class Play extends Phaser.Scene {
             if(this.castleHP < 1 && !this.scene.isActive('gameOverScene')) {
                 this.time.delayedCall(1000, () => { 
                     this.physics.pause()
-                    this.scene.run('gameOverScene', this.timer) 
+                    this.scene.run('gameOverScene', this.timer, this.theMenuScene) 
                 })
 
                 this.gameOver = true
@@ -1490,6 +1436,7 @@ class Play extends Phaser.Scene {
                 this.tutText.text = this.tutTexts[this.tutTextsPos]
                 this.hasEatenNext = true
                 this.addDFly()
+                console.log('eat tut done')
             }
         })
         this.hasEaten = true //cant call this function again
@@ -1514,6 +1461,7 @@ class Play extends Phaser.Scene {
                 this.tutText.text = this.tutTexts[this.tutTextsPos]
                 this.hasSpitAndHitRatNext = true
                 this.addRat()
+                console.log('addrat')
             }
         })
         this.hasSpitAndHitRat = true //cant call this function again
