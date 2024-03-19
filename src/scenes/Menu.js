@@ -12,7 +12,7 @@ class Menu extends Phaser.Scene {
         this.load.image('fg', '/img/Scene/FG.png')
         this.load.image('lilypad', '/img/Scene/LilyPadNew.png')
         this.load.image('rain', '/img/Scene/rain.png')
-        this.load.image('fakecastle', '/img/Scene/Castle.png')
+        this.load.image('fakecastle', '/img/Scene/castle.png')
         this.load.image('night', '/img/Scene/NightAlpha.png')
 
         // load HP Bar UI        
