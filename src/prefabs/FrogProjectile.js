@@ -13,11 +13,11 @@ class FrogProjectile extends Phaser.Physics.Arcade.Sprite {
     }
 
     update() {
-        this.rotation += 0.025
+        this.rotation += 0.025 // rotate the object
 
-        if(this.x > game.config.width) {
+        if(this.x > game.config.width) { // when it goes past the screen
             if(this.parentScene.theMenuScene.tutorial){
-                this.parentScene.addDFly()
+                this.parentScene.addDFly() //spawn another fly during tutorial
             }
             this.parentScene.enemiesHit = 0 // resets enemies hit counter
             this.destroy()

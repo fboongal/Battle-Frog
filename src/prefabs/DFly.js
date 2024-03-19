@@ -5,7 +5,7 @@ class DFly extends Phaser.Physics.Arcade.Sprite {
 
         this.parentScene = scene  
 
-        this.laneY = laneY
+        this.laneY = laneY //which lane
         
         this.hp = 1
         this.hit = false 
@@ -27,10 +27,6 @@ class DFly extends Phaser.Physics.Arcade.Sprite {
     }
 
     update() {
-        if(this.x < 0) {
-            this.destroy()
-        }
-
         const tolerance = 4
 
         this.distance = this.y - this.laneY
@@ -40,28 +36,29 @@ class DFly extends Phaser.Physics.Arcade.Sprite {
 
         if (this.distance < tolerance){
             this.setVelocityY(0)
-            //console.log('tolerable')
         }
         else{
             if(this.goUp){
                 this.setVelocityY(100)
-                //console.log(this.goUp)
             }
             else {
                 this.setVelocityY(-100)
-                //console.log(this.goUp)
             }
+        }
+
+        if(this.x < 0) {
+            this.destroy()
         }
     }
 
-    hitTimer() {
+    hitTimer() { // wait before getting attacked again
         
         this.parentScene.time.delayedCall(150, () => { 
             this.hit = false 
         })
     }
 
-    spitHitTimer() {
+    spitHitTimer() { // wait before getting spat at again
         this.parentScene.time.delayedCall(500, () => { 
             this.spitHit = false 
         })
@@ -71,14 +68,14 @@ class DFly extends Phaser.Physics.Arcade.Sprite {
         if(castle){
             this.died = true
         }
-        this.parentScene.tweens.add({
+        this.parentScene.tweens.add({ // knock back the fly
             targets: this,
             x: this.x + this.parentScene.knockBackForce,
             ease: 'Linear',
             duration: 75,
-            onComplete: () => {
+            onComplete: () => { 
                 this.knockedBack = false
-                if(this.hp < 1 || castle){
+                if(this.hp < 1 || castle){ //fly grants xp and dies
                     if(!castle){
                         this.parentScene.currentXP++
                     }

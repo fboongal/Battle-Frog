@@ -3,34 +3,33 @@ class Rat extends Phaser.Physics.Arcade.Sprite {
         // call Phaser Physics Sprite constructor
         super(scene, game.config.width + 125, spawnY, 'ratrun')
 
-        this.laneY = laneY
+        this.laneY = laneY //which lane is this rat in
 
         this.parentScene = scene
 
-        this.isKing = false
+        this.isKing = false // is this rat the king?
 
-        this.ratSpeedOffset = Phaser.Math.Between(-10, 10)
+        this.ratSpeedOffset = Phaser.Math.Between(-10, 10) // speed offset
 
-        this.isGettingDestroyed = false
+        this.isGettingDestroyed = false //is this rat ok to destroy?
 
-        if(whichRat == 0) {
+
+        //set rat paremeters based on which kind of rat it is
+        if(whichRat == 0) { //base
             this.hp = 100
             this.speed = velocity + this.ratSpeedOffset
         }
-        else if(whichRat == 1){
+        else if(whichRat == 1){// eilte
             this.hp = 300
-            //this.setTexture('eliteratrun')
             this.speed = velocity + this.ratSpeedOffset
         }
-        else if(whichRat == 2){
+        else if(whichRat == 2){ //purple
             this.hp = 800
-            //this.setTexture('purpleratrun')
             this.speed = velocity + 30 + this.ratSpeedOffset
         }
 
-        else if(whichRat == 3){
+        else if(whichRat == 3){ //king
             this.hp = 15000
-            //this.setTexture('purpleratrun')
             this.speed = velocity - 20
             this.isKing = true
         }
@@ -45,10 +44,9 @@ class Rat extends Phaser.Physics.Arcade.Sprite {
         // set up physics sprite
         this.parentScene.add.existing(this)    
         this.parentScene.physics.add.existing(this) 
-        this.setVelocityX(this.speed) 
-        //this.setDragX(5)         
+        this.setVelocityX(this.speed)     
         this.setImmovable()                    
-        this.newRat = true
+        //this.newRat = true
         
         this.eatKnocked = false
         this.goUp = false
@@ -63,15 +61,12 @@ class Rat extends Phaser.Physics.Arcade.Sprite {
     }
     update() {
         //if moved away from lane Y axis, move back lane Y axis
-
         const tolerance = 4
 
         this.distance = this.y - this.laneY
         if(this.distance < 0) {
             this.distance *= -1
         }
-
-        //console.log(distance)
 
         if (this.distance < tolerance){
             this.setVelocityY(0)
@@ -87,19 +82,18 @@ class Rat extends Phaser.Physics.Arcade.Sprite {
             }
         }
 
-        if(this.x < 0) {
+        if(this.x < 0) { // if somehow goes out of screen kill it
             this.destroy()
         }
     }
 
-    hitTimer() {
-        
+    hitTimer() { //cant be hit again for this long
         this.parentScene.time.delayedCall(150, () => { 
             this.hit = false 
         })
     }
 
-    spitHitTimer() {
+    spitHitTimer() { //can't be spat at again for this long
         this.parentScene.time.delayedCall(500, () => { 
             this.spitHit = false 
         })
@@ -110,21 +104,19 @@ class Rat extends Phaser.Physics.Arcade.Sprite {
             if(castle){
                 this.died = true
             }
-            this.parentScene.tweens.add({
+            this.parentScene.tweens.add({ // enemy gets knocked back
                 targets: this,
                 x: this.x + this.parentScene.knockBackForce,
                 ease: 'Linear',
                 duration: 75,
                 onComplete: () => {
-                    this.knockedBack = false
+                    this.knockedBack = false // allow to be knocked back again
                     if(this.hp < 1 || castle){ //if enemy has no health left or has collided with the castle
-                        //change  instead of destroy
-    
-                        if(!castle){
-                            console.log('hi')
+                        if(!castle){ // if didn't get hit by castle...
+
+                            //give xp based on which rat player killed
                             if(this.whichRat == 0) {
                                 this.parentScene.currentXP++
-                                console.log('huh')
                             }
                             else if(this.whichRat == 1){
                                 this.parentScene.currentXP += 2
@@ -136,6 +128,7 @@ class Rat extends Phaser.Physics.Arcade.Sprite {
                             this.parentScene.xpText.text = this.parentScene.currentXP + '/' + this.parentScene.xpNeed
                         }
     
+                        //if this rat isn't the king...
                         if(!this.isKing){
                             this.alpha = 0
                             this.setVelocityX(0)
@@ -149,7 +142,7 @@ class Rat extends Phaser.Physics.Arcade.Sprite {
                             }//tutorial
                         }
     
-    
+                        //if this is the king... and wasn't knocked back from the castle
                         if(this.isKing && !castle){
                             this.setVelocityX(0)
                             this.gameOver = true

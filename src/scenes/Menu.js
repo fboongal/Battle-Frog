@@ -167,11 +167,11 @@ class Menu extends Phaser.Scene {
                 }
 
             if(Phaser.Input.Keyboard.JustDown(keySPACE)) {
-                if(this.selectionOne){
+                if(this.selectionOne){ // regular game
                     this.scene.start('playScene', this)
                 }
     
-                else if(this.selectionTwo){
+                else if(this.selectionTwo){ //guide/ tutorial
                     this.tutorial = true
                     this.scene.start('playScene', this)
                 }
