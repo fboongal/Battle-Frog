@@ -293,18 +293,18 @@ class Play extends Phaser.Scene {
 
         else{
             //tutorial things
-            this.tutTexts = ['Press (W)/(Up Arrow) and (S)/(Down Arrow) to Hop Up and Down the Lily Pads', 
-            'Press (D) or (Right Arrow) Key to Attack',
-            'Press (D) or (Right Arrow) to Attack the Rat',
-            'Press (A) or (Left Arrow) to Eat', 
-            'Press (A) or (Left Arrow) to Eat the Bug',
-            'Press (A) or (Left Arrow) Again to Spit Out the Bug and Hit the Rat',
+            this.tutTexts = ['Press |W| & |S| or Arrow Keys to Hop Up and Down the Lilypads', 
+            'Press |D| or |Right Arrow| to Swing your Sword',
+            'Press |D| or |Right Arrow| to Attack the Rat with your Sword',
+            'Press |A| or |Left Arrow| to Eat', 
+            'Press |A| or |Left Arrow| to Eat the Bug',
+            'Press |A| or |Left Arrow| Again to Spit Out the Bug and Hit the Rat',
             'Let a Rat Run Into You to Block them, Knocking Them Back',
-            'Tutorial Complete! Press (M) to go to Menu'
+            'Tutorial Complete! Press |M| to go to Menu'
             ]
             this.tutTextsPos = 0
-            this.tutText = this.add.bitmapText(centerX, 50, 'wTH', this.tutTexts[this.tutTextsPos] ).setOrigin(0.5, 0.5).setScale(0.4).setDepth(50)
-            
+            this.tutText = this.add.bitmapText(centerX, 50, 'TH', this.tutTexts[this.tutTextsPos] ).setOrigin(0.5, 0.5).setScale(0.4).setDepth(50)
+            this.add.image(centerX, centerY, 'banner').setDepth(30)
         }
 
         // ingame timer

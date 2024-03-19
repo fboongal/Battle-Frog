@@ -39,7 +39,8 @@ class Menu extends Phaser.Scene {
         this.load.image('hbutton', '/img/UI/highlighted button.png')
         this.load.image('title', '/img/UI/title.png')
 
-        // load check boxes
+        // load tutorial UI
+        this.load.image('banner', '/img/UI/banner.png')
         this.load.image('cBox', '/img/UI/checkbox.png')
         this.load.image('mBox', '/img/UI/checkmark.png')
 
@@ -51,6 +52,7 @@ class Menu extends Phaser.Scene {
         this.load.bitmapFont('wTH', 'font/wTH.png', 'font/wTH.xml') // White Trash Hand
         this.load.bitmapFont('rTH', 'font/rTH.png', 'font/rTH.xml') // Red Trash Hand
 
+        // load music & sounds
         //this.load.audio('music', '/sounds/BattleFrogsTheme.wav')
         this.load.audio('music', '/sounds/FrogThemeDrums.wav')
         this.load.audio('bossmusic', '/sounds/BossMusic2.wav')
@@ -144,7 +146,7 @@ class Menu extends Phaser.Scene {
         this.tutorial = false
 
         // add cursor tool tip
-        this.add.bitmapText(15, 560, 'TH', 'Press (SPACE) to select').setScale(0.4)
+        this.add.bitmapText(15, 560, 'TH', 'Press |SPACE| to select').setScale(0.4)
     }
 
     update(){
