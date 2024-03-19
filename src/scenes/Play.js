@@ -650,8 +650,8 @@ class Play extends Phaser.Scene {
                     this.skillTwoUI.setAlpha(0)
                     this.skillOneUI.setAlpha(1)
 
-                if(this.arText.setAlpha(0)) {
-                    this.arRedText.setAlpha(1)
+                if(this.srText.setAlpha(0)) {
+                    this.srRedText.setAlpha(1)
                     this.prRedText.setAlpha(0)
                     this.plRedText.setAlpha(0)
 
@@ -665,11 +665,11 @@ class Play extends Phaser.Scene {
                     this.skillTwoUI.setAlpha(1)
 
                 if(this.prText.setAlpha(0)) {
-                    this.arRedText.setAlpha(0)
+                    this.srRedText.setAlpha(0)
                     this.prRedText.setAlpha(1)
                     this.plRedText.setAlpha(0)
 
-                    this.arText.setAlpha(1)
+                    this.srText.setAlpha(1)
                     this.plText.setAlpha(1)
                 }
             }
@@ -679,11 +679,11 @@ class Play extends Phaser.Scene {
                     this.skillThreeUI.setAlpha(1)
 
                  if(this.plText.setAlpha(0)) {
-                    this.arRedText.setAlpha(0)
+                    this.srRedText.setAlpha(0)
                     this.prRedText.setAlpha(0)
                     this.plRedText.setAlpha(1)
 
-                    this.arText.setAlpha(1)
+                    this.srText.setAlpha(1)
                     this.prText.setAlpha(1)
                     }
                 }
@@ -692,7 +692,7 @@ class Play extends Phaser.Scene {
                 if(this.selectionTwo) {
                     this.selectionTwo = false
                     this.selectionOne = true
-                    this.arText.setAlpha(0)
+                    this.srText.setAlpha(0)
                 }
                 else if(this.selectionThree) {
                     this.selectionThree = false
@@ -1271,11 +1271,11 @@ class Play extends Phaser.Scene {
         this.skillThreeUI = this.add.image(centerX, centerY, 'bSelect').setOrigin(0.5).setDepth(20)
         
         this.upgTextUI = [
-            this.arText = this.add.bitmapText(centerX, 275, 'TH', 'Increase Attack Range').setDepth(20).setScale(0.7).setOrigin(0.5),
+            this.srText = this.add.bitmapText(centerX, 275, 'TH', 'Increase Swing Range').setDepth(20).setScale(0.7).setOrigin(0.5),
             this.prText = this.add.bitmapText(centerX, 372, 'TH', 'Pierce Enemies').setDepth(20).setScale(0.7).setOrigin(0.5),
             this.plText = this.add.bitmapText(centerX, 472, 'TH', 'Increase All Damage').setDepth(20).setScale(0.7).setOrigin(0.5),
 
-            this.arRedText = this.add.bitmapText(centerX, 275, 'rTH', 'Increase Attack Range').setDepth(20).setScale(0.7).setOrigin(0.5).setAlpha(0),
+            this.srRedText = this.add.bitmapText(centerX, 275, 'rTH', 'Increase Swing Range').setDepth(20).setScale(0.7).setOrigin(0.5).setAlpha(0),
             this.prRedText = this.add.bitmapText(centerX, 372, 'rTH', 'Pierce Enemies').setDepth(20).setScale(0.7).setOrigin(0.5).setAlpha(0),
             this.plRedText = this.add.bitmapText(centerX, 472, 'rTH', 'Increase All Damage').setDepth(20).setScale(0.7).setOrigin(0.5).setAlpha(0)
         ]
