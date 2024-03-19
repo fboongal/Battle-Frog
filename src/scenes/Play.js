@@ -510,7 +510,7 @@ class Play extends Phaser.Scene {
                 this.spawnPurples = true
             }
 
-            if(this.timer == 5 && !this.fakeWin){ // after 180 seconds spawn begin boss sequence
+            if(this.timer == 180 && !this.fakeWin){ // after 180 seconds spawn begin boss sequence
                 // remove spawn timers
                 this.ratSpawnTimer.remove()
                 this.dFlySpawnTimer.remove()
@@ -1398,11 +1398,13 @@ class Play extends Phaser.Scene {
         let devCredits = this.add.bitmapText(1100, centerY, 'wTH', devCreditsText).setScale(1.25).setDepth(4).setOrigin(0, 0.5)
         this.physics.add.existing(devCredits)
         devCredits.body.setVelocityX(-150)
-        let menuText = this.add.bitmapText(1600, centerY, 'wTH', 'Press (M) to go to Menu').setScale(1.25).setDepth(4).setOrigin(0.42, 0.5)
-        let resetText = this.add.bitmapText(1600, centerY + 100, 'wTH', 'Press (R) to go to Reset').setScale(1.25).setDepth(4).setOrigin(0.42, 0.5)
+        let menuText = this.add.bitmapText(1600, centerY, 'wTH', 'Press (M) to go to Menu').setScale(1.2).setDepth(4).setOrigin(0.42, 0.5)
+        let resetText = this.add.bitmapText(1600, centerY + 200, 'wTH', 'Press (R) to go to Reset').setScale(1.2).setDepth(4).setOrigin(0.42, 0.5)
+        let endGameText = []
+        endGameText.push(resetText, menuText)
         this.time.delayedCall(36000, () => { //after credits have scrolled send out the menu prompt
             this.tweens.add({
-                targets: menuText, resetText,
+                targets: endGameText,
                 x: centerX,
                 ease: 'Linear',
                 duration: 8000
