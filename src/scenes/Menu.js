@@ -128,12 +128,15 @@ class Menu extends Phaser.Scene {
         }
 
         // add buttons + text
-        this.begin = this.add.image(centerX, centerY+170, 'button')
-        this.beginH = this.add.image(centerX, centerY+170, 'hbutton').setAlpha(0)
-        this.guide = this.add.image(centerX-150, centerY+20, 'button').setScale(0.75)
-        this.guideH = this.add.image(centerX-150, centerY+20, 'hbutton').setScale(0.75).setAlpha(0)
-        this.add.bitmapText(395, 425, 'TH', 'BEGIN').setScale(1.25).setDepth(1)
-        this.add.bitmapText(255, 280, 'TH', 'GUIDE').setScale(1.12).setDepth(1)
+        this.buttonOne = this.add.image(centerX-150, centerY+20, 'button').setScale(0.75)
+        this.buttonOneSelect = this.add.image(centerX-150, centerY+20, 'hbutton').setScale(0.75).setAlpha(0)
+        this.buttonTwo = this.add.image(centerX, centerY+170, 'button')
+        this.buttonTwoSelect = this.add.image(centerX, centerY+170, 'hbutton').setAlpha(0)
+        
+        this.tutText = this.add.bitmapText(240, 290, 'TH', 'TUTORIAL').setScale(0.9).setDepth(1)
+        this.begText = this.add.bitmapText(395, 428, 'TH', 'BEGIN').setScale(1.25).setDepth(1)
+        this.tutWhiteText = this.add.bitmapText(240, 290, 'wTH', 'TUTORIAL').setScale(0.9).setDepth(1).setAlpha(0)
+        this.begWhiteText = this.add.bitmapText(395, 428, 'wTH', 'BEGIN').setScale(1.25).setDepth(1).setAlpha(0)
 
         this.selectionOne = true
         this.selectionTwo = false
@@ -144,35 +147,45 @@ class Menu extends Phaser.Scene {
     update(){
             // highlight text
             if(this.selectionOne){
-                this.begin.setAlpha(0)
-                this.beginH.setAlpha(1)
-                this.guide.setAlpha(1)
-                this.guideH.setAlpha(0)
+                this.buttonOne.setAlpha(0)
+                this.buttonOneSelect.setAlpha(1)
+                this.buttonTwo.setAlpha(1)
+                this.buttonTwoSelect.setAlpha(0)
+
+                this.tutText.setAlpha(0)
+                this.tutWhiteText.setAlpha(1)
+                this.begText.setAlpha(1)
+                this.begWhiteText.setAlpha(0)
             }
 
             else {
-                this.begin.setAlpha(1) 
-                this.beginH.setAlpha(0)
-                this.guide.setAlpha(0)
-                this.guideH.setAlpha(1)
+                this.buttonOne.setAlpha(1)
+                this.buttonOneSelect.setAlpha(0)
+                this.buttonTwo.setAlpha(0) 
+                this.buttonTwoSelect.setAlpha(1)
+                
+                this.tutText.setAlpha(1)
+                this.tutWhiteText.setAlpha(0)
+                this.begText.setAlpha(0)
+                this.begWhiteText.setAlpha(1)
             }
 
-            if(Phaser.Input.Keyboard.JustDown(keyUP) && this.selectionOne){
-                 this.selectionOne = false    
+            if(Phaser.Input.Keyboard.JustDown(keyDOWN) && this.selectionOne){
+                 this.selectionOne = false   
                  this.selectionTwo = true   
             }
-            else if(Phaser.Input.Keyboard.JustDown(keyDOWN) && !this.selectionOne){
+            else if(Phaser.Input.Keyboard.JustDown(keyUP) && !this.selectionOne){
                  this.selectionOne = true
                  this.selectionTwo = false
                 }
 
             if(Phaser.Input.Keyboard.JustDown(keySPACE)) {
-                if(this.selectionOne){ // regular game
+                if(this.selectionOne){ //guide/ tutorial
+                    this.tutorial = true
                     this.scene.start('playScene', this)
                 }
     
-                else if(this.selectionTwo){ //guide/ tutorial
-                    this.tutorial = true
+                else if(this.selectionTwo){ // regular game
                     this.scene.start('playScene', this)
                 }
             }
