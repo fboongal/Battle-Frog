@@ -60,3 +60,4 @@ let keyRIGHT
 let keyMENU
 let keyRESTART
 let keySPACE
+let keyENTER

@@ -34,9 +34,13 @@ class GameOver extends Phaser.Scene {
 
     update() {
         // set input keys
+        cursors = this.input.keyboard.createCursorKeys()
+
         keyLEFT = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A)
         keyRIGHT = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D)
         keySPACE = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE)
+        keyENTER= this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ENTER)
+        
 
         // set selections
         if(this.selectionOne) {
@@ -54,16 +58,16 @@ class GameOver extends Phaser.Scene {
             this.yayRed.setAlpha(0)
         }
 
-        if(Phaser.Input.Keyboard.JustDown(keyRIGHT) && this.selectionOne){
+        if((Phaser.Input.Keyboard.JustDown(keyRIGHT) || Phaser.Input.Keyboard.JustDown(cursors.right)) && this.selectionOne){
             this.selectionOne = false    
             this.selectionTwo = true   
        }
-       else if(Phaser.Input.Keyboard.JustDown(keyLEFT) && !this.selectionOne){
+       else if((Phaser.Input.Keyboard.JustDown(keyLEFT) || Phaser.Input.Keyboard.JustDown(cursors.left) )&& !this.selectionOne){
             this.selectionOne = true
             this.selectionTwo = false
            }
 
-       if(Phaser.Input.Keyboard.JustDown(keySPACE)) {
+       if(Phaser.Input.Keyboard.JustDown(keySPACE) || Phaser.Input.Keyboard.JustDown(keyENTER)) {
             if(this.selectionOne){
                 this.scene.stop('playScene')
                 this.scene.start('playScene', this.theMenuScene)

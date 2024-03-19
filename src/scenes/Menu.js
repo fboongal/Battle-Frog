@@ -108,6 +108,7 @@ class Menu extends Phaser.Scene {
         keyUP = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W)
         keyDOWN = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S)
         keySPACE = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE)
+        keyENTER = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ENTER)
 
         // adding title screen
         this.add.image(centerX, centerY, 'title')
@@ -125,7 +126,7 @@ class Menu extends Phaser.Scene {
             console.log('music false')
         }
 
-        // add buttons + text
+        // add buttons + text on buttons
         this.buttonOne = this.add.image(centerX-150, centerY+20, 'button').setScale(0.75)
         this.buttonOneSelect = this.add.image(centerX-150, centerY+20, 'hbutton').setScale(0.75).setAlpha(0)
         this.buttonTwo = this.add.image(centerX, centerY+170, 'button')
@@ -139,7 +140,11 @@ class Menu extends Phaser.Scene {
         this.selectionOne = true
         this.selectionTwo = false
 
+        // set tutorial to false
         this.tutorial = false
+
+        // add cursor tool tip
+        this.add.bitmapText(15, 560, 'TH', 'Press (SPACE) to select').setScale(0.4)
     }
 
     update(){
@@ -168,16 +173,16 @@ class Menu extends Phaser.Scene {
                 this.begWhiteText.setAlpha(1)
             }
 
-            if(Phaser.Input.Keyboard.JustDown(keyDOWN) && this.selectionOne){
+            if((Phaser.Input.Keyboard.JustDown(keyDOWN) || Phaser.Input.Keyboard.JustDown(cursors.down)) && this.selectionOne){
                  this.selectionOne = false   
                  this.selectionTwo = true   
             }
-            else if(Phaser.Input.Keyboard.JustDown(keyUP) && !this.selectionOne){
+            else if((Phaser.Input.Keyboard.JustDown(keyUP) || Phaser.Input.Keyboard.JustDown(cursors.up)) && !this.selectionOne){
                  this.selectionOne = true
                  this.selectionTwo = false
                 }
 
-            if(Phaser.Input.Keyboard.JustDown(keySPACE)) {
+            if(Phaser.Input.Keyboard.JustDown(keySPACE) || Phaser.Input.Keyboard.JustDown(keyENTER)) {
                 if(this.selectionOne){ //guide/ tutorial
                     this.tutorial = true
                     this.scene.start('playScene', this)

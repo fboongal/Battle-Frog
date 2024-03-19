@@ -293,17 +293,17 @@ class Play extends Phaser.Scene {
 
         else{
             //tutorial things
-            this.tutTexts = ['Press (W) and (S) to Hop Up and Down the Lily Pads', 
-            'Press (D) to Attack',
-            'Press (D) to Attack the Rat',
-            'Press (A) to Eat', 
-            'Press (A) to Eat the Bug',
-            'Press (A) Again to Spit Out the Bug and Hit the Rat',
+            this.tutTexts = ['Press (W)/(Up Arrow) and (S)/(Down Arrow) to Hop Up and Down the Lily Pads', 
+            'Press (D) or (Right Arrow) Key to Attack',
+            'Press (D) or (Right Arrow) to Attack the Rat',
+            'Press (A) or (Left Arrow) to Eat', 
+            'Press (A) or (Left Arrow) to Eat the Bug',
+            'Press (A) or (Left Arrow) Again to Spit Out the Bug and Hit the Rat',
             'Let a Rat Run Into You to Block them, Knocking Them Back',
             'Tutorial Complete! Press (M) to go to Menu'
             ]
             this.tutTextsPos = 0
-            this.tutText = this.add.bitmapText(centerX, 530, 'wTH', this.tutTexts[this.tutTextsPos] ).setOrigin(0.5, 0.5).setScale(0.6).setDepth(50)
+            this.tutText = this.add.bitmapText(centerX, 50, 'wTH', this.tutTexts[this.tutTextsPos] ).setOrigin(0.5, 0.5).setScale(0.4).setDepth(50)
             
         }
 
@@ -627,10 +627,10 @@ class Play extends Phaser.Scene {
             }
 
             // hopping stuff
-            if(keyDOWN.isDown) {
+            if(keyDOWN.isDown || cursors.down.isDown) {
                 this.keyDownCode()
             }
-            else if(keyUP.isDown){
+            else if(keyUP.isDown || cursors.up.isDown){
                 this.keyUpCode()
             }
 
@@ -687,7 +687,7 @@ class Play extends Phaser.Scene {
                     }
                 }
 
-            if(Phaser.Input.Keyboard.JustDown(keyUP) && !this.selectionOne){
+            if((Phaser.Input.Keyboard.JustDown(keyUP) || Phaser.Input.Keyboard.JustDown(cursors.up)) && !this.selectionOne){
                 if(this.selectionTwo) {
                     this.selectionTwo = false
                     this.selectionOne = true
@@ -699,7 +699,7 @@ class Play extends Phaser.Scene {
                     this.prText.setAlpha(0)
                 }
             }
-            else if(Phaser.Input.Keyboard.JustDown(keyDOWN) && !this.selectionThree){
+            else if((Phaser.Input.Keyboard.JustDown(keyDOWN) || Phaser.Input.Keyboard.JustDown(cursors.down)) && !this.selectionThree){
                 if(this.selectionTwo) {
                     this.selectionTwo = false
                     this.selectionThree = true
