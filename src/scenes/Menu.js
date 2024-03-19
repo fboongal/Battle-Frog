@@ -47,8 +47,6 @@ class Menu extends Phaser.Scene {
         this.load.image('gameOver', '/img/UI/GameOver.png')
 
         // load bitmap font
-        this.load.bitmapFont('BC', 'font/BC.png', 'font/BC.xml') // Black Castle found from https://www.dafont.com/black-castle.font by Richard William Mueller
-        this.load.bitmapFont('wBC', 'font/wBC.png', 'font/wBC.xml') // White Black Castle
         this.load.bitmapFont('TH', 'font/TH.png', 'font/TH.xml') // Trash Hand found from https://www.dafont.com/trashhand.font by Luce Avérous
         this.load.bitmapFont('wTH', 'font/wTH.png', 'font/wTH.xml') // White Trash Hand
         this.load.bitmapFont('rTH', 'font/rTH.png', 'font/rTH.xml') // Red Trash Hand

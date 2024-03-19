@@ -492,8 +492,15 @@ class Play extends Phaser.Scene {
                 this.scene.stop('playScene')
                 this.scene.start('playScene')
             }
-
         }
+        //if in tutorial...
+        if(this.theMenuScene.tutorial){
+            this.currentXP = 0 // can't gain xp
+            this.timerText.setAlpha(0) // hide timer text
+            this.xpText.setAlpha(0) // hide xp text
+            this.levelText.setAlpha(0) // hide level text
+        }
+
         //tutorial code
         this.hopTut()
 
@@ -1446,7 +1453,12 @@ class Play extends Phaser.Scene {
             this.rainLoop.loop = true
             this.rainLoop.play()
             this.rain.setAlpha(1)
-            //this.dancingRat.setAlpha(1)
+
+            this.danceChance = Phaser.Math.Between(0, 100)
+            if(this.danceChance == 100){
+                this.dancingRat.setAlpha(1)
+            }
+
             this.night.setAlpha(0.15).setDepth(50)
             this.tweens.addCounter({
                 from: 1,
@@ -1456,7 +1468,9 @@ class Play extends Phaser.Scene {
                 {
                     const value = tween.getValue()
                     this.whiteOut.setAlpha(value)
-                    //this.dancingRat.setAlpha(value)
+                    if(this.danceChance == 100){
+                        this.dancingRat.setAlpha(value)
+                    }
                 }
             })
             this.whiteOut.setAlpha(0)
