@@ -185,6 +185,7 @@ class Play extends Phaser.Scene {
         keySPACE = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE)
         keyMENU = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.M)
         keyRESTART = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.R)
+        keyENTER = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ENTER)
 
         // background and foreground
         this.bgImage = this.add.sprite(centerX, centerY, 'bg')
@@ -712,7 +713,7 @@ class Play extends Phaser.Scene {
                 }
             }
 
-            if(Phaser.Input.Keyboard.JustDown(keySPACE)) { // on space press...
+            if(Phaser.Input.Keyboard.JustDown(keySPACE) || Phaser.Input.Keyboard.JustDown(keyENTER)) { // on space press...
                 if(this.selectionOne){
                     this.increaseAttackRange()
                 }
