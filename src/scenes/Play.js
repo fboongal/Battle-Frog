@@ -70,7 +70,7 @@ class Play extends Phaser.Scene {
 
         // dragon fly 
         this.dFlySpeed = -200
-        this.dFlySpawnDelay = 8000
+        this.dFlySpawnDelay = 7000
         this.dFlyStartSpawnDelay = 3000
         this.dFlyPos = new Phaser.Math.Vector2()
         this.dFlyRandom = 0
@@ -268,7 +268,7 @@ class Play extends Phaser.Scene {
         if(!menuScene.tutorial){
             // challenge timer that increases spawn rate of enemies and dFlys
             this.challengeTimer = this.time.addEvent({
-                delay: 7500,
+                delay: 7000,
                 callback: this.addChallenge,
                 callbackScope: this,
                 loop: true
@@ -1176,12 +1176,12 @@ class Play extends Phaser.Scene {
         //when not paused, increase spawn rate of both rats and flys
         if(!this.powerUpScreen && !this.gameOver){
             // spawn faster
-            if(this.dFLySpawnDelay > 1300){
-                this.dFlySpawnDelay -= 300
+            if(this.dFLySpawnDelay > 1000){
+                this.dFlySpawnDelay -= 250
                 this.dFlySpawnTimer.delay = this.dFlySpawnDelay
             }
             if(this.ratSpawnDelay > 500) {
-                this.ratSpawnDelay -= 125
+                this.ratSpawnDelay -= 100
                 this.ratSpawnTimer.delay = this.ratSpawnDelay
             }
 
@@ -1238,7 +1238,7 @@ class Play extends Phaser.Scene {
             this.currentLevel++
             this.levelText.text = 'LVL: ' + this.currentLevel
             this.currentXP = 0
-            this.xpNeed *= 1.5
+            this.xpNeed *= 1.25
             this.xpNeed = Math.ceil(this.xpNeed)
             this.updateXP()
             this.skillScreen()
@@ -1287,8 +1287,8 @@ class Play extends Phaser.Scene {
     }
 
     increaseDamage() { // increases both spit dmg and atk dmg
-        this.atkDmg *= 1.5
-        this.spitDmg *= 1.5
+        this.atkDmg *= 1.25
+        this.spitDmg *= 1.25
     }
 
     destroyEnemies(sprite, enemy) { 
