@@ -169,7 +169,7 @@ class Play extends Phaser.Scene {
         //play bg music if game was reset from play instead of menu
         if(!this.theMenuScene.musicPlayed){
             this.menuMusic.play()
-            console.log(this.theMenuScene.musicPlayed)
+            //console.log(this.theMenuScene.musicPlayed)
         }
         else{
             this.theMenuScene.musicPlayed = false
@@ -924,20 +924,20 @@ class Play extends Phaser.Scene {
             }
             // if purples can spawn...
             else if(this.purpleCanSpawn){
-                console.log('canpurple')
+                //console.log('canpurple')
                 this.purpleRandom = Phaser.Math.Between(0, 4) // 1/4 chance of spawning in a purple rat
                 this.ratEliteRandom = Phaser.Math.Between(0, 1) // 1/2 chance of spawning in an elite rat
                 if(this.purpleRandom == 4){
                     this.whichRat = 2
-                    console.log('purple')
+                    //console.log('purple')
                 }
                 else if(this.ratEliteRandom == 1){
                     this.whichRat = 1
-                    console.log('elite')
+                    //console.log('elite')
                 }
                 else{
                     this.whichRat = 0
-                    console.log('base')
+                    //console.log('base')
                 }
             }
 
@@ -1044,7 +1044,7 @@ class Play extends Phaser.Scene {
             //TUTORIAL STUFF
             if(this.theMenuScene.tutorial && !this.hasEatenBug && this.hasHoppedNext && this.hasAttackedNext && this.hasAttackedRatNext && this.hasEatenNext){
                 this.eatBugTut()
-                console.log('eatBugTut done')
+                //console.log('eatBugTut done')
             }
             
             //freeze the fly for a moment before deleting it and adding it to belly
@@ -1192,8 +1192,8 @@ class Play extends Phaser.Scene {
                 this.ratSpawnTimer.delay = this.ratSpawnDelay
             }
 
-            console.log('add challenge')
-            console.log(this.ratSpawnDelay)
+            //console.log('add challenge')
+            //console.log(this.ratSpawnDelay)
         }
     }
 
@@ -1486,7 +1486,7 @@ class Play extends Phaser.Scene {
                 //check mark and sound go here
                 this.time.delayedCall(1000, () => {
                     if(!this.hasHoppedNext){
-                        console.log('timedelay')
+                        //console.log('timedelay')
                         this.tutTextsPos++ //increase text array number
                         this.tutText.text = this.tutTexts[this.tutTextsPos] // set next text based on text array number
                         this.hasHoppedNext = true // set has hopped to true so player can't alter anything with another hop
@@ -1529,7 +1529,7 @@ class Play extends Phaser.Scene {
                 this.tutText.text = this.tutTexts[this.tutTextsPos]
                 this.hasEatenNext = true
                 this.addDFly()
-                console.log('eat tut done')
+                //console.log('eat tut done')
             }
         })
         this.hasEaten = true //cant call this function again
@@ -1554,7 +1554,7 @@ class Play extends Phaser.Scene {
                 this.tutText.text = this.tutTexts[this.tutTextsPos]
                 this.hasSpitAndHitRatNext = true
                 this.addRat()
-                console.log('addrat')
+                //console.log('addrat')
             }
         })
         this.hasSpitAndHitRat = true //cant call this function again

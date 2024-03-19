@@ -8,9 +8,9 @@ class GameOver extends Phaser.Scene {
 
         this.myscore = score
 
-        console.log(this.theMenuScene)
+        //console.log(this.theMenuScene)
 
-        console.log(this.myscore)
+        //console.log(this.myscore)
         keyMENU = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.M)
         keyRESTART = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.R)
         

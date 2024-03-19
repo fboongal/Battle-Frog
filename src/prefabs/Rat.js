@@ -152,7 +152,7 @@ class Rat extends Phaser.Physics.Arcade.Sprite {
                         else if (this.isKing && castle) {
                             this.setVelocityX(0)
                             this.parentScene.GameOver(true)
-                            console.log('game over')
+                            //console.log('game over')
                         }
                     }
                     

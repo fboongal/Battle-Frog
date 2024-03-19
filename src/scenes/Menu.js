@@ -118,12 +118,12 @@ class Menu extends Phaser.Scene {
         if(!this.musicPlayed){
             this.bgMusic.play()
             this.musicPlayed = true
-            console.log('music play')
+            //console.log('music play')
         }
 
         if (this.musicPlayed && this.scene.isActive('playScene')){
             this.musicPlayed = false
-            console.log('music false')
+            //console.log('music false')
         }
 
         // add buttons + text on buttons
