@@ -184,6 +184,7 @@ class Play extends Phaser.Scene {
         keyDOWN = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S)
         keySPACE = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE)
         keyMENU = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.M)
+        keyRESTART = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.R)
 
         // background and foreground
         this.bgImage = this.add.sprite(centerX, centerY, 'bg')
@@ -481,9 +482,17 @@ class Play extends Phaser.Scene {
 
     update() {
         //return to menu by pressing M if the game is over or the tutorial is over
-        if((this.gameEnd || this.tutorialEnd) && Phaser.Input.Keyboard.JustDown(keyMENU)){
-            this.menuMusic.stop()
-            this.scene.start('menuScene')
+        if((this.gameEnd || this.tutorialEnd)){
+            if( Phaser.Input.Keyboard.JustDown(keyMENU)){
+                this.menuMusic.stop()
+                this.scene.start('menuScene')
+            }
+
+            if( Phaser.Input.Keyboard.JustDown(keyRESTART)){
+                this.scene.stop('playScene')
+                this.scene.start('playScene')
+            }
+
         }
         //tutorial code
         this.hopTut()
@@ -501,7 +510,7 @@ class Play extends Phaser.Scene {
                 this.spawnPurples = true
             }
 
-            if(this.timer == 180 && !this.fakeWin){ // after 180 seconds spawn begin boss sequence
+            if(this.timer == 5 && !this.fakeWin){ // after 180 seconds spawn begin boss sequence
                 // remove spawn timers
                 this.ratSpawnTimer.remove()
                 this.dFlySpawnTimer.remove()
@@ -530,7 +539,7 @@ class Play extends Phaser.Scene {
                     this.ratKing = new Rat(this, this.ratSpeed, 420, 420, 3).setOrigin(0.5, 1)
                     this.ratKing.anims.play('ratkingrun').setSize(200,160)
                     this.ratGroup.add(this.ratKing)
-                    this.ratKing.setDepth(2 + this.laneDepthMod)
+                    this.ratKing.setDepth(10)
 
                     // resume the enemy spawners!
                     this.ratSpawnTimer = this.time.addEvent({
@@ -1390,10 +1399,10 @@ class Play extends Phaser.Scene {
         this.physics.add.existing(devCredits)
         devCredits.body.setVelocityX(-150)
         let menuText = this.add.bitmapText(1600, centerY, 'wTH', 'Press (M) to go to Menu').setScale(1.25).setDepth(4).setOrigin(0.42, 0.5)
-
+        let resetText = this.add.bitmapText(1600, centerY + 100, 'wTH', 'Press (R) to go to Reset').setScale(1.25).setDepth(4).setOrigin(0.42, 0.5)
         this.time.delayedCall(36000, () => { //after credits have scrolled send out the menu prompt
             this.tweens.add({
-                targets: menuText,
+                targets: menuText, resetText,
                 x: centerX,
                 ease: 'Linear',
                 duration: 8000
