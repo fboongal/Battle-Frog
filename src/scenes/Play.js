@@ -534,7 +534,7 @@ class Play extends Phaser.Scene {
                 this.time.delayedCall(4000, () => {
                     this.destroyAll.setPosition(-3000, -3000)
                     this.time.delayedCall(4000, () => {
-                        this.bossMusic = this.sound.add('bossmusic', {volume: 1, loop: true})
+                        this.bossMusic = this.sound.add('bossmusic', {volume: 1.25, loop: true})
                         this.bossMusic.play()
                     })
                     this.ThunderWhiteOut()
@@ -1405,14 +1405,14 @@ class Play extends Phaser.Scene {
         let devCredits = this.add.bitmapText(1100, centerY, 'wTH', devCreditsText).setScale(1.25).setDepth(4).setOrigin(0, 0.5)
         this.physics.add.existing(devCredits)
         devCredits.body.setVelocityX(-150)
-        let menuText = this.add.bitmapText(1600, centerY, 'wTH', 'Press (M) to go to Menu').setScale(1.2).setDepth(4).setOrigin(0.42, 0.5)
-        let resetText = this.add.bitmapText(1600, centerY + 200, 'wTH', 'Press (R) to go to Reset').setScale(1.2).setDepth(4).setOrigin(0.42, 0.5)
+        let menuText = this.add.bitmapText(1600, centerY - 20, 'wTH', 'Press (M) to go to Menu').setScale(1).setDepth(4).setOrigin(0.42, 0.5)
+        let resetText = this.add.bitmapText(1600, centerY + 50, 'wTH', 'Press (R) to Reset').setScale(1).setDepth(4).setOrigin(0.42, 0.5)
         let endGameText = []
         endGameText.push(resetText, menuText)
         this.time.delayedCall(36000, () => { //after credits have scrolled send out the menu prompt
             this.tweens.add({
                 targets: endGameText,
-                x: centerX,
+                x: centerX + 75,
                 ease: 'Linear',
                 duration: 8000
             })
