@@ -23,6 +23,8 @@
 // Handwritten font to match original source material!(Menu Title, Game Over Text)
 // Interactive tutorial!
 //
+// Notes:
+// Get to 180 seconds to see the boss!
 
 
 'use strict'
