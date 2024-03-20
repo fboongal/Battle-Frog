@@ -25,6 +25,7 @@
 //
 // Notes:
 // Get to 180 seconds to see the boss!
+// Credits are after the boss
 
 
 'use strict'
